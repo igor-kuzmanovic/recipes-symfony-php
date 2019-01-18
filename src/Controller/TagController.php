@@ -3,12 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\Tag;
+use App\Transformer\TagTransformer;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Fractal\Manager;
+use League\Fractal\Resource\Item;
+use League\Fractal\Resource\Collection;
+use League\Fractal\Serializer\JsonApiSerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @Route("/api/tags")
@@ -16,121 +20,105 @@ use Symfony\Component\Serializer\SerializerInterface;
 class TagController extends AbstractController
 {
     /**
+     * @param Request $request
+     * @param EntityManagerInterface $em
+     *
+     * @return Response
+     *
      * @Route("/", methods={"POST"}, name="tag_create")
      */
-    public function create(Request $request, SerializerInterface $serializer, EntityManagerInterface $em) : Response
+    public function create(Request $request, EntityManagerInterface $em) : Response
     {
-        $response = null;
+        $response = new Response();
 
-        $jsonTag = $request->getContent();
-        $tag = $serializer->deserialize($jsonTag, tag::class, 'json');
 
-        $em->persist($tag);
-        $em->flush();
-
-        $response = $this->json([
-            'id' => $tag->getId()
-        ]);
 
         return $response;
     }
 
     /**
-     * @Route("/{id}", methods={"GET"}, defaults={"id"=0}, name="tag_read")
+     * @param int $id
+     * @param Request $request
+     * @param EntityManagerInterface $em
+     *
+     * @return Response
+     *
+     * @Route("/{id}", methods={"GET"}, name="tag_read")
      */
-    public function read(int $id, EntityManagerInterface $em) : Response
+    public function read(int $id, Request $request, EntityManagerInterface $em) : Response
     {
-        $response = null;
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/json');
 
-        if ($id > 0)
-        {
-            $tag = $em->find(tag::class, $id);
+        $manager = new Manager();
+        $manager->setSerializer(new JsonApiSerializer());
 
-            if ($tag)
-            {
-                $response = $this->json($tag);
-            }
-            else
-            {
-                $response = new Response("Not found.", Response::HTTP_NOT_FOUND);
-            }
-        }
-        else
-        {
-            $tags = $em->getRepository(tag::class)->findAll();
+        $tag = $em->getRepository(tag::Class)->find($id);
 
-            $response = $this->json($tags);
-        }
+        $resource = new Item($tag, new TagTransformer(), 'tags');
+        $data = $manager->createData($resource)->toJson();
 
+        $response->setContent($data);
         return $response;
     }
 
     /**
+     * @param Request $request
+     * @param EntityManagerInterface $em
+     *
+     * @return Response
+     *
+     * @Route("/", methods={"GET"}, name="tag_read_all")
+     */
+    public function readAll(Request $request, EntityManagerInterface $em) : Response
+    {
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/json');
+
+        $manager = new Manager();
+        $manager->setSerializer(new JsonApiSerializer());
+
+        $tags = $em->getRepository(tag::Class)->findAll();
+
+        $resource = new Collection($tags, new TagTransformer(), 'tags');
+        $data = $manager->createData($resource)->toJson();
+
+        $response->setContent($data);
+        return $response;
+    }
+
+    /**
+     * @param int $id
+     * @param Request $request
+     * @param EntityManagerInterface $em
+     *
+     * @return Response
+     *
      * @Route("/{id}", methods={"PATCH"}, defaults={"id"=0}, name="tag_update")
      */
-    public function update(int $id, Request $request, SerializerInterface $serializer, EntityManagerInterface $em) : Response
+    public function update(int $id, Request $request, EntityManagerInterface $em) : Response
     {
-        $response = null;
-
-        if ($id > 0)
-        {
-            $tag = $em->find(tag::class, $id);
-
-            if ($tag)
-            {
-                $jsonUpdatedtag = $request->getContent();
-                $updatedtag = $serializer->deserialize($jsonUpdatedtag, tag::class,'json');
-                $tag->setName($updatedtag->getName());
-
-                $em->persist($tag);
-                $em->flush();
-
-                $response = $this->json([
-                   'id' => $id
-                ]);
-            }
-            else
-            {
-                $response = new Response("Not found.", Response::HTTP_NOT_FOUND);
-            }
-        }
-        else
-        {
-            $response = new Response("Bad request.", Response::HTTP_BAD_REQUEST);
-        }
+        $response = new Response();
 
         return $response;
     }
 
     /**
+     * @param int $id
+     * @param EntityManagerInterface $em
+     *
+     * @return Response
+     *
      * @Route("/{id}", methods={"DELETE"}, defaults={"id"=0}, name="tag_delete")
      */
     public function delete(int $id, EntityManagerInterface $em) : Response
     {
-        $response = null;
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/json');
 
-        if ($id > 0)
-        {
-            $tag = $em->find(tag::class, $id);
-
-            if ($tag)
-            {
-                $em->remove($tag);
-                $em->flush();
-
-                $response = $this->json([
-                    'id' => $id
-                ]);
-            }
-            else
-            {
-                $response = new Response("Not found.", Response::HTTP_NOT_FOUND);
-            }
-        }
-        else
-        {
-            $response = new Response("Bad request.", Response::HTTP_BAD_REQUEST);
-        }
+        $tag = $em->getRepository(tag::Class)->find($id);
+        $em->remove($tag);
+        $em->flush();
 
         return $response;
     }
