@@ -5,3 +5,7 @@ INSERT INTO db_recipes.ingredient (id, name) VALUES (4, 'Ketchup');
 INSERT INTO db_recipes.ingredient (id, name) VALUES (5, 'Lettuce');
 INSERT INTO db_recipes.ingredient (id, name) VALUES (6, 'Onions');
 INSERT INTO db_recipes.ingredient (id, name) VALUES (7, 'Tomato');
+INSERT INTO db_recipes.ingredient (id, name) VALUES (9, 'Dough');
+INSERT INTO db_recipes.ingredient (id, name) VALUES (10, 'Pepperoni');
+INSERT INTO db_recipes.ingredient (id, name) VALUES (11, 'Oregano');
+INSERT INTO db_recipes.ingredient (id, name) VALUES (12, 'Pineapple');

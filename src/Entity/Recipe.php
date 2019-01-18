@@ -95,7 +95,7 @@ class Recipe
         return $this;
     }
 
-    public function getCategory(): Category
+    public function getCategory(): Collection
     {
         return $this->category;
     }
