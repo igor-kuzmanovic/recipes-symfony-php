@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Ingredient;
+use App\Entity\Tag;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,32 +11,32 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
- * @Route("/api/ingredients")
+ * @Route("/api/tags")
  */
-class IngredientController extends AbstractController
+class TagController extends AbstractController
 {
     /**
-     * @Route("/", methods={"POST"}, name="ingredient_create")
+     * @Route("/", methods={"POST"}, name="tag_create")
      */
     public function create(Request $request, SerializerInterface $serializer, EntityManagerInterface $em) : Response
     {
         $response = null;
 
-        $jsonIngredient = $request->getContent();
-        $ingredient = $serializer->deserialize($jsonIngredient, Ingredient::class, 'json');
+        $jsonTag = $request->getContent();
+        $tag = $serializer->deserialize($jsonTag, tag::class, 'json');
 
-        $em->persist($ingredient);
+        $em->persist($tag);
         $em->flush();
 
         $response = $this->json([
-            'id' => $ingredient->getId()
+            'id' => $tag->getId()
         ]);
 
         return $response;
     }
 
     /**
-     * @Route("/{id}", methods={"GET"}, defaults={"id"=0}, name="ingredient_read")
+     * @Route("/{id}", methods={"GET"}, defaults={"id"=0}, name="tag_read")
      */
     public function read(int $id, EntityManagerInterface $em) : Response
     {
@@ -44,11 +44,11 @@ class IngredientController extends AbstractController
 
         if ($id > 0)
         {
-            $ingredient = $em->find(Ingredient::class, $id);
+            $tag = $em->find(tag::class, $id);
 
-            if ($ingredient)
+            if ($tag)
             {
-                $response = $this->json($ingredient);
+                $response = $this->json($tag);
             }
             else
             {
@@ -57,16 +57,16 @@ class IngredientController extends AbstractController
         }
         else
         {
-            $ingredients = $em->getRepository(Ingredient::class)->findAll();
+            $tags = $em->getRepository(tag::class)->findAll();
 
-            $response = $this->json($ingredients);
+            $response = $this->json($tags);
         }
 
         return $response;
     }
 
     /**
-     * @Route("/{id}", methods={"PATCH"}, defaults={"id"=0}, name="ingredient_update")
+     * @Route("/{id}", methods={"PATCH"}, defaults={"id"=0}, name="tag_update")
      */
     public function update(int $id, Request $request, SerializerInterface $serializer, EntityManagerInterface $em) : Response
     {
@@ -74,15 +74,15 @@ class IngredientController extends AbstractController
 
         if ($id > 0)
         {
-            $ingredient = $em->find(Ingredient::class, $id);
+            $tag = $em->find(tag::class, $id);
 
-            if ($ingredient)
+            if ($tag)
             {
-                $jsonUpdatedIngredient = $request->getContent();
-                $updatedIngredient = $serializer->deserialize($jsonUpdatedIngredient, Ingredient::class,'json');
-                $ingredient->setName($updatedIngredient->getName());
+                $jsonUpdatedtag = $request->getContent();
+                $updatedtag = $serializer->deserialize($jsonUpdatedtag, tag::class,'json');
+                $tag->setName($updatedtag->getName());
 
-                $em->persist($ingredient);
+                $em->persist($tag);
                 $em->flush();
 
                 $response = $this->json([
@@ -103,7 +103,7 @@ class IngredientController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", methods={"DELETE"}, defaults={"id"=0}, name="ingredient_delete")
+     * @Route("/{id}", methods={"DELETE"}, defaults={"id"=0}, name="tag_delete")
      */
     public function delete(int $id, EntityManagerInterface $em) : Response
     {
@@ -111,11 +111,11 @@ class IngredientController extends AbstractController
 
         if ($id > 0)
         {
-            $ingredient = $em->find(Ingredient::class, $id);
+            $tag = $em->find(tag::class, $id);
 
-            if ($ingredient)
+            if ($tag)
             {
-                $em->remove($ingredient);
+                $em->remove($tag);
                 $em->flush();
 
                 $response = $this->json([

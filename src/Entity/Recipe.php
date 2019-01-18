@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -33,7 +34,7 @@ class Recipe
     private $ingredients;
 
     /**
-     * @ORM\OneToMany(targetEntity="Category", mappedBy="Recipe")
+     * @ORM\ManyToMany(targetEntity="Category")
      */
     private $category;
 
@@ -82,7 +83,7 @@ class Recipe
         return $this;
     }
 
-    public function getIngredients(): ArrayCollection
+    public function getIngredients(): Collection
     {
         return $this->ingredients;
     }
@@ -106,7 +107,7 @@ class Recipe
         return $this->category;
     }
 
-    public function getTags(): ArrayCollection
+    public function getTags(): Collection
     {
         return $this->tags;
     }

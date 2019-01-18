@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Ingredient;
+use App\Entity\Recipe;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,32 +11,32 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
- * @Route("/api/ingredients")
+ * @Route("/api/recipes")
  */
-class IngredientController extends AbstractController
+class RecipeController extends AbstractController
 {
     /**
-     * @Route("/", methods={"POST"}, name="ingredient_create")
+     * @Route("/", methods={"POST"}, name="recipe_create")
      */
     public function create(Request $request, SerializerInterface $serializer, EntityManagerInterface $em) : Response
     {
         $response = null;
 
-        $jsonIngredient = $request->getContent();
-        $ingredient = $serializer->deserialize($jsonIngredient, Ingredient::class, 'json');
+        $jsonRecipe = $request->getContent();
+        $recipe = $serializer->deserialize($jsonRecipe, Recipe::class, 'json');
 
-        $em->persist($ingredient);
+        $em->persist($recipe);
         $em->flush();
 
         $response = $this->json([
-            'id' => $ingredient->getId()
+            'id' => $recipe->getId()
         ]);
 
         return $response;
     }
 
     /**
-     * @Route("/{id}", methods={"GET"}, defaults={"id"=0}, name="ingredient_read")
+     * @Route("/{id}", methods={"GET"}, defaults={"id"=0}, name="recipe_read")
      */
     public function read(int $id, EntityManagerInterface $em) : Response
     {
@@ -44,11 +44,11 @@ class IngredientController extends AbstractController
 
         if ($id > 0)
         {
-            $ingredient = $em->find(Ingredient::class, $id);
+            $recipe = $em->find(Recipe::class, $id);
 
-            if ($ingredient)
+            if ($recipe)
             {
-                $response = $this->json($ingredient);
+                $response = $this->json($recipe);
             }
             else
             {
@@ -57,16 +57,16 @@ class IngredientController extends AbstractController
         }
         else
         {
-            $ingredients = $em->getRepository(Ingredient::class)->findAll();
+            $recipes = $em->getRepository(Recipe::class)->findAll();
 
-            $response = $this->json($ingredients);
+            $response = $this->json($recipes);
         }
 
         return $response;
     }
 
     /**
-     * @Route("/{id}", methods={"PATCH"}, defaults={"id"=0}, name="ingredient_update")
+     * @Route("/{id}", methods={"PATCH"}, defaults={"id"=0}, name="recipe_update")
      */
     public function update(int $id, Request $request, SerializerInterface $serializer, EntityManagerInterface $em) : Response
     {
@@ -74,15 +74,15 @@ class IngredientController extends AbstractController
 
         if ($id > 0)
         {
-            $ingredient = $em->find(Ingredient::class, $id);
+            $recipe = $em->find(Recipe::class, $id);
 
-            if ($ingredient)
+            if ($recipe)
             {
-                $jsonUpdatedIngredient = $request->getContent();
-                $updatedIngredient = $serializer->deserialize($jsonUpdatedIngredient, Ingredient::class,'json');
-                $ingredient->setName($updatedIngredient->getName());
+                $jsonUpdatedRecipe = $request->getContent();
+                $updatedRecipe = $serializer->deserialize($jsonUpdatedRecipe, Recipe::class,'json');
+                $recipe->setName($updatedRecipe->getName());
 
-                $em->persist($ingredient);
+                $em->persist($recipe);
                 $em->flush();
 
                 $response = $this->json([
@@ -103,7 +103,7 @@ class IngredientController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", methods={"DELETE"}, defaults={"id"=0}, name="ingredient_delete")
+     * @Route("/{id}", methods={"DELETE"}, defaults={"id"=0}, name="recipe_delete")
      */
     public function delete(int $id, EntityManagerInterface $em) : Response
     {
@@ -111,11 +111,11 @@ class IngredientController extends AbstractController
 
         if ($id > 0)
         {
-            $ingredient = $em->find(Ingredient::class, $id);
+            $recipe = $em->find(Recipe::class, $id);
 
-            if ($ingredient)
+            if ($recipe)
             {
-                $em->remove($ingredient);
+                $em->remove($recipe);
                 $em->flush();
 
                 $response = $this->json([

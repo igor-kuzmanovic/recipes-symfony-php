@@ -1,0 +1,2 @@
+INSERT INTO db_recipes.migration_versions (version, executed_at) VALUES ('20190118114502', '2019-01-18 11:45:09');
+INSERT INTO db_recipes.migration_versions (version, executed_at) VALUES ('20190118133853', '2019-01-18 13:39:06');
