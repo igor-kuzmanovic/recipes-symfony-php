@@ -1,2 +1,0 @@
-INSERT INTO db_recipes.recipe (id, title, description, date) VALUES (1, 'Pepperoni Pizza', 'A pepperoni pizza with additional hot-sauce', '2019-01-18 00:00:00');
-INSERT INTO db_recipes.recipe (id, title, description, date) VALUES (2, 'Vegetarian Pizza', 'A vegetarian pizza rich with vitamins.', '2019-01-18 00:00:00');

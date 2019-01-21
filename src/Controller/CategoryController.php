@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\Tag;
-use App\Transformer\JsonToTagTransformer;
-use App\Transformer\TagToJsonTransformer;
+use App\Entity\Category;
+use App\Transformer\JsonToCategoryTransformer;
+use App\Transformer\CategoryToJsonTransformer;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Item;
@@ -17,13 +17,13 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * @Route("/api/tags")
+ * @Route("/api/categories")
  */
-class TagController extends AbstractController
+class CategoryController extends AbstractController
 {
-    private $type = 'tags';
+    private $type = 'categories';
     private $apiUrl = 'http://localhost:8000/api';
-    private $baseUrl = 'http://localhost:8000/api/tags/';
+    private $baseUrl = 'http://localhost:8000/api/categories/';
 
     /**
      * @param Request $request
@@ -32,7 +32,7 @@ class TagController extends AbstractController
      *
      * @return Response
      *
-     * @Route("/", methods={"POST"}, name="tag_create")
+     * @Route("/", methods={"POST"}, name="category_create")
      */
     public function create(Request $request, EntityManagerInterface $em, ValidatorInterface $validator) : Response
     {
@@ -40,23 +40,22 @@ class TagController extends AbstractController
         $response->headers->set('Content-Type', 'application/vnd.api+json');
 
         $content = $request->getContent();
-        $transformer = new JsonToTagTransformer();
-        $tag = $transformer->transformSingle($content);
-        if ($tag)
+        $transformer = new JsonToCategoryTransformer();
+        $category = $transformer->transformSingle($content);
+        if ($category)
         {
-            $errors = $validator->validate($tag);
-            if (count($errors) == 0)
-            {
-                $em->persist($tag);
+            $errors = $validator->validate($category);
+            if (count($errors) == 0) {
+                $em->persist($category);
                 $em->flush();
-                $resource = new Item($tag, new TagToJsonTransformer(), $this->type);
+                $resource = new Item($category, new CategoryToJsonTransformer(), $this->type);
 
                 $manager = new Manager();
                 $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
                 $content = $manager->createData($resource)->toJson();
 
                 $response->setContent($content);
-                $response->headers->set('Location', $this->baseUrl.'/'.$tag->getId());
+                $response->headers->set('Location', $this->baseUrl . '/' . $category->getId());
                 $response->setStatusCode(Response::HTTP_CREATED);
             }
             else
@@ -79,15 +78,15 @@ class TagController extends AbstractController
      *
      * @return Response
      *
-     * @Route("/", methods={"GET"}, name="tag_read_all")
+     * @Route("/", methods={"GET"}, name="category_read_all")
      */
     public function readAll(Request $request, EntityManagerInterface $em) : Response
     {
         $response = new Response();
         $response->headers->set('Content-Type', 'application/vnd.api+json');
 
-        $tags = $em->getRepository(tag::Class)->findAll();
-        $resource = new Collection($tags, new TagToJsonTransformer(), $this->type);
+        $category = $em->getRepository(category::Class)->findAll();
+        $resource = new Collection($category, new CategoryToJsonTransformer(), $this->type);
 
         $manager = new Manager();
         $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
@@ -106,17 +105,17 @@ class TagController extends AbstractController
      *
      * @return Response
      *
-     * @Route("/{id}", methods={"GET"}, name="tag_read")
+     * @Route("/{id}", methods={"GET"}, name="category_read")
      */
     public function read(int $id, Request $request, EntityManagerInterface $em) : Response
     {
         $response = new Response();
         $response->headers->set('Content-Type', 'application/vnd.api+json');
 
-        $tag = $em->getRepository(Tag::Class)->find($id);
-        if ($tag)
+        $category = $em->getRepository(Category::Class)->find($id);
+        if ($category)
         {
-            $resource = new Item($tag, new TagToJsonTransformer(), $this->type);
+            $resource = new Item($category, new CategoryToJsonTransformer(), $this->type);
 
             $manager = new Manager();
             $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
@@ -141,34 +140,33 @@ class TagController extends AbstractController
      *
      * @return Response
      *
-     * @Route("/{id}", methods={"PATCH"}, name="tag_update")
+     * @Route("/{id}", methods={"PATCH"}, name="category_update")
      */
     public function update(int $id, Request $request, EntityManagerInterface $em, ValidatorInterface $validator) : Response
     {
         $response = new Response();
         $response->headers->set('Content-Type', 'application/vnd.api+json');
 
-        $tag = $em->getRepository(Tag::Class)->find($id);
-        if ($tag)
+        $category = $em->getRepository(Category::Class)->find($id);
+        if ($category)
         {
             $content = $request->getContent();
-            $transformer = new JsonToTagTransformer();
-            $tagNew = $transformer->transformSingle($content);
-            if ($tagNew)
+            $transformer = new JsonToCategoryTransformer();
+            $categoryNew = $transformer->transformSingle($content);
+            if ($categoryNew)
             {
-                $errors = $validator->validate($tagNew);
-                if (count($errors) == 0)
-                {
-                    $tag->setName($tagNew->getName());
+                $errors = $validator->validate($categoryNew);
+                if (count($errors) == 0) {
+                    $category->setName($categoryNew->getName());
                     $em->flush();
-                    $resource = new Item($tag, new TagToJsonTransformer(), $this->type);
+                    $resource = new Item($category, new CategoryToJsonTransformer(), $this->type);
 
                     $manager = new Manager();
                     $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
                     $content = $manager->createData($resource)->toJson();
 
                     $response->setContent($content);
-                    $response->headers->set('Location', $this->baseUrl . '/' . $tag->getId());
+                    $response->headers->set('Location', $this->baseUrl . '/' . $category->getId());
                     $response->setStatusCode(Response::HTTP_OK);
                 }
                 else
@@ -196,16 +194,16 @@ class TagController extends AbstractController
      *
      * @return Response
      *
-     * @Route("/{id}", methods={"DELETE"}, name="tag_delete")
+     * @Route("/{id}", methods={"DELETE"}, name="category_delete")
      */
     public function delete(int $id, EntityManagerInterface $em) : Response
     {
         $response = new Response();
 
-        $tag = $em->getRepository(Tag::Class)->find($id);
-        if ($tag)
+        $category = $em->getRepository(Category::Class)->find($id);
+        if ($category)
         {
-            $em->remove($tag);
+            $em->remove($category);
             $em->flush();
 
             $response->setStatusCode(Response::HTTP_ACCEPTED);

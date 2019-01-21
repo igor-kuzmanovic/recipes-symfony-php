@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\RecipeRepository")
@@ -20,31 +21,41 @@ class Recipe
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
+     * @Assert\Length(max = 255)
      */
     private $title;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=510)
+     * @Assert\NotBlank
+     * @Assert\Length(max = 510)
      */
     private $description;
 
     /**
      * @ORM\ManyToMany(targetEntity="Ingredient")
+     * @Assert\Valid
      */
     private $ingredients;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Category")
+     * @ORM\ManyToOne(targetEntity="Category")
+     * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+     * @Assert\NotBlank
+     * @Assert\Valid
      */
     private $category;
 
     /**
      * @ORM\ManyToMany(targetEntity="Tag")
+     * @Assert\Valid
      */
     private $tags;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\Blank
      */
     private $date;
 
@@ -57,6 +68,13 @@ class Recipe
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getTitle(): ?string
@@ -95,7 +113,7 @@ class Recipe
         return $this;
     }
 
-    public function getCategory(): Collection
+    public function getCategory(): ?Category
     {
         return $this->category;
     }
@@ -104,7 +122,7 @@ class Recipe
     {
         $this->category = $category;
 
-        return $this->category;
+        return $this;
     }
 
     public function getTags(): Collection
@@ -128,6 +146,6 @@ class Recipe
     {
         $this->date = $date;
 
-        return $this->date;
+        return $this;
     }
 }

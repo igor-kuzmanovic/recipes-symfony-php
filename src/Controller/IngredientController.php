@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\Tag;
-use App\Transformer\JsonToTagTransformer;
-use App\Transformer\TagToJsonTransformer;
+use App\Entity\Ingredient;
+use App\Transformer\JsonToIngredientTransformer;
+use App\Transformer\IngredientToJsonTransformer;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Item;
@@ -17,13 +17,13 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * @Route("/api/tags")
+ * @Route("/api/ingredients")
  */
-class TagController extends AbstractController
+class IngredientController extends AbstractController
 {
-    private $type = 'tags';
+    private $type = 'ingredients';
     private $apiUrl = 'http://localhost:8000/api';
-    private $baseUrl = 'http://localhost:8000/api/tags/';
+    private $baseUrl = 'http://localhost:8000/api/ingredients/';
 
     /**
      * @param Request $request
@@ -32,7 +32,7 @@ class TagController extends AbstractController
      *
      * @return Response
      *
-     * @Route("/", methods={"POST"}, name="tag_create")
+     * @Route("/", methods={"POST"}, name="ingredient_create")
      */
     public function create(Request $request, EntityManagerInterface $em, ValidatorInterface $validator) : Response
     {
@@ -40,23 +40,23 @@ class TagController extends AbstractController
         $response->headers->set('Content-Type', 'application/vnd.api+json');
 
         $content = $request->getContent();
-        $transformer = new JsonToTagTransformer();
-        $tag = $transformer->transformSingle($content);
-        if ($tag)
+        $transformer = new JsonToIngredientTransformer();
+        $ingredient = $transformer->transformSingle($content);
+        if ($ingredient)
         {
-            $errors = $validator->validate($tag);
+            $errors = $validator->validate($ingredient);
             if (count($errors) == 0)
             {
-                $em->persist($tag);
+                $em->persist($ingredient);
                 $em->flush();
-                $resource = new Item($tag, new TagToJsonTransformer(), $this->type);
+                $resource = new Item($ingredient, new IngredientToJsonTransformer(), $this->type);
 
                 $manager = new Manager();
                 $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
                 $content = $manager->createData($resource)->toJson();
 
                 $response->setContent($content);
-                $response->headers->set('Location', $this->baseUrl.'/'.$tag->getId());
+                $response->headers->set('Location', $this->baseUrl.'/'.$ingredient->getId());
                 $response->setStatusCode(Response::HTTP_CREATED);
             }
             else
@@ -79,15 +79,15 @@ class TagController extends AbstractController
      *
      * @return Response
      *
-     * @Route("/", methods={"GET"}, name="tag_read_all")
+     * @Route("/", methods={"GET"}, name="ingredient_read_all")
      */
     public function readAll(Request $request, EntityManagerInterface $em) : Response
     {
         $response = new Response();
         $response->headers->set('Content-Type', 'application/vnd.api+json');
 
-        $tags = $em->getRepository(tag::Class)->findAll();
-        $resource = new Collection($tags, new TagToJsonTransformer(), $this->type);
+        $ingredients = $em->getRepository(ingredient::Class)->findAll();
+        $resource = new Collection($ingredients, new IngredientToJsonTransformer(), $this->type);
 
         $manager = new Manager();
         $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
@@ -106,17 +106,17 @@ class TagController extends AbstractController
      *
      * @return Response
      *
-     * @Route("/{id}", methods={"GET"}, name="tag_read")
+     * @Route("/{id}", methods={"GET"}, name="ingredient_read")
      */
     public function read(int $id, Request $request, EntityManagerInterface $em) : Response
     {
         $response = new Response();
         $response->headers->set('Content-Type', 'application/vnd.api+json');
 
-        $tag = $em->getRepository(Tag::Class)->find($id);
-        if ($tag)
+        $ingredient = $em->getRepository(Ingredient::Class)->find($id);
+        if ($ingredient)
         {
-            $resource = new Item($tag, new TagToJsonTransformer(), $this->type);
+            $resource = new Item($ingredient, new IngredientToJsonTransformer(), $this->type);
 
             $manager = new Manager();
             $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
@@ -141,34 +141,34 @@ class TagController extends AbstractController
      *
      * @return Response
      *
-     * @Route("/{id}", methods={"PATCH"}, name="tag_update")
+     * @Route("/{id}", methods={"PATCH"}, name="ingredient_update")
      */
     public function update(int $id, Request $request, EntityManagerInterface $em, ValidatorInterface $validator) : Response
     {
         $response = new Response();
         $response->headers->set('Content-Type', 'application/vnd.api+json');
 
-        $tag = $em->getRepository(Tag::Class)->find($id);
-        if ($tag)
+        $ingredient = $em->getRepository(Ingredient::Class)->find($id);
+        if ($ingredient)
         {
             $content = $request->getContent();
-            $transformer = new JsonToTagTransformer();
-            $tagNew = $transformer->transformSingle($content);
-            if ($tagNew)
+            $transformer = new JsonToIngredientTransformer();
+            $ingredientNew = $transformer->transformSingle($content);
+            if ($ingredientNew)
             {
-                $errors = $validator->validate($tagNew);
+                $errors = $validator->validate($ingredient);
                 if (count($errors) == 0)
                 {
-                    $tag->setName($tagNew->getName());
+                    $ingredient->setName($ingredientNew->getName());
                     $em->flush();
-                    $resource = new Item($tag, new TagToJsonTransformer(), $this->type);
+                    $resource = new Item($ingredient, new IngredientToJsonTransformer(), $this->type);
 
                     $manager = new Manager();
                     $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
                     $content = $manager->createData($resource)->toJson();
 
                     $response->setContent($content);
-                    $response->headers->set('Location', $this->baseUrl . '/' . $tag->getId());
+                    $response->headers->set('Location', $this->baseUrl.'/'.$ingredient->getId());
                     $response->setStatusCode(Response::HTTP_OK);
                 }
                 else
@@ -196,16 +196,16 @@ class TagController extends AbstractController
      *
      * @return Response
      *
-     * @Route("/{id}", methods={"DELETE"}, name="tag_delete")
+     * @Route("/{id}", methods={"DELETE"}, name="ingredient_delete")
      */
     public function delete(int $id, EntityManagerInterface $em) : Response
     {
         $response = new Response();
 
-        $tag = $em->getRepository(Tag::Class)->find($id);
-        if ($tag)
+        $ingredient = $em->getRepository(Ingredient::Class)->find($id);
+        if ($ingredient)
         {
-            $em->remove($tag);
+            $em->remove($ingredient);
             $em->flush();
 
             $response->setStatusCode(Response::HTTP_ACCEPTED);

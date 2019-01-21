@@ -1,9 +1,0 @@
-INSERT INTO db_recipes.recipe_ingredient (recipe_id, ingredient_id) VALUES (1, 1);
-INSERT INTO db_recipes.recipe_ingredient (recipe_id, ingredient_id) VALUES (1, 3);
-INSERT INTO db_recipes.recipe_ingredient (recipe_id, ingredient_id) VALUES (1, 7);
-INSERT INTO db_recipes.recipe_ingredient (recipe_id, ingredient_id) VALUES (1, 11);
-INSERT INTO db_recipes.recipe_ingredient (recipe_id, ingredient_id) VALUES (2, 1);
-INSERT INTO db_recipes.recipe_ingredient (recipe_id, ingredient_id) VALUES (2, 4);
-INSERT INTO db_recipes.recipe_ingredient (recipe_id, ingredient_id) VALUES (2, 6);
-INSERT INTO db_recipes.recipe_ingredient (recipe_id, ingredient_id) VALUES (2, 10);
-INSERT INTO db_recipes.recipe_ingredient (recipe_id, ingredient_id) VALUES (2, 12);
