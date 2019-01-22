@@ -1,0 +1,1 @@
+SELECT * FROM recipe WHERE date > 'yyyy-mm-dd' OR category_id IN (1,2,...,N) OR id IN (SELECT recipe_id FROM recipe_tag WHERE tag_id IN (1,2,...,N))
