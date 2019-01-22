@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Category;
+use App\Transformer\ErrorToJsonTransformer;
 use App\Transformer\JsonToCategoryTransformer;
 use App\Transformer\CategoryToJsonTransformer;
 use Doctrine\ORM\EntityManagerInterface;
@@ -59,7 +60,9 @@ class CategoryController extends AbstractController
             }
             else
             {
-                $response->setContent('{"errors":"TODO: Validation errors"}');
+                $transformer = new ErrorToJsonTransformer();
+                $errorMessage = $transformer->transform($errors);
+                $response->setContent($errorMessage);
                 $response->setStatusCode(Response::HTTP_BAD_REQUEST);
             }
         }
@@ -167,7 +170,9 @@ class CategoryController extends AbstractController
                 }
                 else
                 {
-                    $response->setContent('{"errors":"TODO: Validation errors"}');
+                    $transformer = new ErrorToJsonTransformer();
+                    $errorMessage = $transformer->transform($errors);
+                    $response->setContent($errorMessage);
                     $response->setStatusCode(Response::HTTP_BAD_REQUEST);
                 }
             }

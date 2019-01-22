@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Ingredient;
+use App\Transformer\ErrorToJsonTransformer;
 use App\Transformer\JsonToIngredientTransformer;
 use App\Transformer\IngredientToJsonTransformer;
 use Doctrine\ORM\EntityManagerInterface;
@@ -60,7 +61,9 @@ class IngredientController extends AbstractController
             }
             else
             {
-                $response->setContent('{"errors":"TODO: Validation errors"}');
+                $transformer = new ErrorToJsonTransformer();
+                $errorMessage = $transformer->transform($errors);
+                $response->setContent($errorMessage);
                 $response->setStatusCode(Response::HTTP_BAD_REQUEST);
             }
         }
@@ -169,7 +172,9 @@ class IngredientController extends AbstractController
                 }
                 else
                 {
-                    $response->setContent('{"errors":"TODO: Validation errors"}');
+                    $transformer = new ErrorToJsonTransformer();
+                    $errorMessage = $transformer->transform($errors);
+                    $response->setContent($errorMessage);
                     $response->setStatusCode(Response::HTTP_BAD_REQUEST);
                 }
             }

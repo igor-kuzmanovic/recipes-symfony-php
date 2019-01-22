@@ -35,6 +35,7 @@ class Recipe
 
     /**
      * @ORM\ManyToMany(targetEntity="Ingredient")
+     * @Assert\NotBlank
      * @Assert\Valid
      */
     private $ingredients;
@@ -49,13 +50,13 @@ class Recipe
 
     /**
      * @ORM\ManyToMany(targetEntity="Tag")
+     * @Assert\NotBlank
      * @Assert\Valid
      */
     private $tags;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Assert\Blank
      */
     private $date;
 
@@ -137,7 +138,7 @@ class Recipe
         return $this;
     }
 
-    public function getDate(): \DateTime
+    public function getDate(): ?\DateTime
     {
         return $this->date;
     }
