@@ -13,6 +13,7 @@
         "symfony/flex": "^1.1",
         "symfony/framework-bundle": "4.2.*",
         "symfony/orm-pack": "^1.0",
+        "symfony/polyfill-php72": "^1.10",
         "symfony/property-access": "4.2.*",
         "symfony/validator": "4.2.*",
         "symfony/yaml": "4.2.*"

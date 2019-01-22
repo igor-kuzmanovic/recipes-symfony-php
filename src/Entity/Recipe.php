@@ -36,7 +36,6 @@ class Recipe
     /**
      * @ORM\ManyToMany(targetEntity="Ingredient")
      * @Assert\NotBlank
-     * @Assert\Valid
      */
     private $ingredients;
 
@@ -44,14 +43,12 @@ class Recipe
      * @ORM\ManyToOne(targetEntity="Category")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
      * @Assert\NotBlank
-     * @Assert\Valid
      */
     private $category;
 
     /**
      * @ORM\ManyToMany(targetEntity="Tag")
      * @Assert\NotBlank
-     * @Assert\Valid
      */
     private $tags;
 
