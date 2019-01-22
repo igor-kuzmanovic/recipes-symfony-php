@@ -95,12 +95,20 @@ class RecipeController extends AbstractController
         $response = new Response();
         $response->headers->set('Content-Type', 'application/vnd.api+json');
 
-        $recipe = $em->getRepository(Recipe::class)->findAll();
+        $query = $request->query;
+        if ($query->has('filter'))
+        {
+            $filter = $query->get('filter');
+            $recipe = $em->getRepository(Recipe::class)->findByFilter($filter);
+        }
+        else
+        {
+            $recipe = $em->getRepository(Recipe::class)->findAll();
+        }
         $resource = new Collection($recipe, new RecipeToJsonTransformer(), $this->type);
 
         $manager = new Manager();
         $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
-        $query = $request->query;
         if ($query->has('include'))
         {
             $includes = $query->get('include');
