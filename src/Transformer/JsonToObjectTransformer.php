@@ -3,33 +3,59 @@
 namespace App\Transformer;
 
 use App\Entity\Tag;
+use Doctrine\ORM\EntityManagerInterface;
 
 abstract class JsonToObjectTransformer
 {
+    protected $em;
+
+    public function __construct(EntityManagerInterface $em = null)
+    {
+        $this->em = $em;
+    }
+
     /**
-     * @param array $data
-     *
-     * @return mixed
+     * @param object &$object
+     * @param array $relationships
+     * @return void
      */
-    abstract protected function transform(array $data);
+    abstract protected function applyRelationships(object &$object, array $relationships);
+
+    /**
+     * @param object &$object
+     * @param array $attributes
+     * @return void
+     */
+    abstract protected function applyAttributes(object &$object, array $attributes);
+
+    /**
+     * @param object &$object
+     * @param int $id
+     * @return void
+     */
+    abstract protected function applyId(object &$object, int $id);
+
+    /**
+     * @param object &$object
+     * @param array $data
+     * @return void
+     */
+    abstract protected function transform(object &$object, array $data);
 
     /**
      * @param string $content
-     *
-     * @return mixed
+     * @return void
      */
     abstract public function transformSingle(string $content);
 
     /**
      * @param string $content
-     *
-     * @return array
+     * @return object
      */
     abstract public function transformMany(string $content);
 
     /**
      * @param array $json
-     *
      * @return array
      */
     protected function getData(array $json)
@@ -46,7 +72,6 @@ abstract class JsonToObjectTransformer
 
     /**
      * @param array $data
-     *
      * @return int
      */
     protected function getId(array $data)
@@ -63,7 +88,25 @@ abstract class JsonToObjectTransformer
 
     /**
      * @param array $data
-     *
+     * @return array
+     */
+    protected function getIds(array $data)
+    {
+        $ids = [];
+
+        foreach ($data as $datum)
+        {
+            if(key_exists('id', $datum))
+            {
+                $ids[] = $datum['id'];
+            }
+        }
+
+        return $ids;
+    }
+
+    /**
+     * @param array $data
      * @return string
      */
     protected function getType(array $data)
@@ -80,7 +123,6 @@ abstract class JsonToObjectTransformer
 
     /**
      * @param array $data
-     *
      * @return array
      */
     protected function getAttributes(array $data)
@@ -97,7 +139,6 @@ abstract class JsonToObjectTransformer
 
     /**
      * @param array $data
-     *
      * @return array
      */
     protected function getRelationships(array $data)

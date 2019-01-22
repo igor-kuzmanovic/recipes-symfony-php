@@ -15,7 +15,6 @@ class RecipeToJsonTransformer extends Fractal\TransformerAbstract
 
     /**
      * @param Recipe $recipe
-     *
      * @return array
      */
     public function transform(Recipe $recipe)
@@ -30,7 +29,6 @@ class RecipeToJsonTransformer extends Fractal\TransformerAbstract
 
     /**
      * @param Recipe $recipe
-     *
      * @return Fractal\Resource\Collection
      */
     public function includeIngredients(Recipe $recipe)
@@ -42,7 +40,6 @@ class RecipeToJsonTransformer extends Fractal\TransformerAbstract
 
     /**
      * @param Recipe $recipe
-     *
      * @return Fractal\Resource\Item
      */
     public function includeCategory(Recipe $recipe)
@@ -54,7 +51,6 @@ class RecipeToJsonTransformer extends Fractal\TransformerAbstract
 
     /**
      * @param Recipe $recipe
-     *
      * @return Fractal\Resource\Collection
      */
     public function includeTags(Recipe $recipe)

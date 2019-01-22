@@ -29,10 +29,9 @@ class IngredientController extends AbstractController
      * @param Request $request
      * @param EntityManagerInterface $em
      * @param ValidatorInterface $validator
-     *
      * @return Response
      *
-     * @Route("/", methods={"POST"}, name="ingredient_create")
+     * @Route("", methods={"POST"}, name="ingredient_create")
      */
     public function create(Request $request, EntityManagerInterface $em, ValidatorInterface $validator) : Response
     {
@@ -76,10 +75,9 @@ class IngredientController extends AbstractController
     /**
      * @param Request $request
      * @param EntityManagerInterface $em
-     *
      * @return Response
      *
-     * @Route("/", methods={"GET"}, name="ingredient_read_all")
+     * @Route("", methods={"GET"}, name="ingredient_read_all")
      */
     public function readAll(Request $request, EntityManagerInterface $em) : Response
     {
@@ -103,7 +101,6 @@ class IngredientController extends AbstractController
      * @param int $id
      * @param Request $request
      * @param EntityManagerInterface $em
-     *
      * @return Response
      *
      * @Route("/{id}", methods={"GET"}, name="ingredient_read")
@@ -138,7 +135,6 @@ class IngredientController extends AbstractController
      * @param Request $request
      * @param EntityManagerInterface $em
      * @param ValidatorInterface $validator
-     *
      * @return Response
      *
      * @Route("/{id}", methods={"PATCH"}, name="ingredient_update")
@@ -193,7 +189,6 @@ class IngredientController extends AbstractController
     /**
      * @param int $id
      * @param EntityManagerInterface $em
-     *
      * @return Response
      *
      * @Route("/{id}", methods={"DELETE"}, name="ingredient_delete")

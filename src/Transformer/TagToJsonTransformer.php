@@ -9,7 +9,6 @@ class TagToJsonTransformer extends Fractal\TransformerAbstract
 {
     /**
      * @param Tag $tag
-     *
      * @return array
      */
     public function transform(Tag $tag)

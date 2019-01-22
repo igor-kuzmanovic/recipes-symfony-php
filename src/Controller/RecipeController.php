@@ -29,11 +29,10 @@ class RecipeController extends AbstractController
      * @param Request $request
      * @param EntityManagerInterface $em
      * @param ValidatorInterface $validator
-     *
      * @return Response
      * @throws
      *
-     * @Route("/", methods={"POST"}, name="recipe_create")
+     * @Route("", methods={"POST"}, name="recipe_create")
      */
     public function create(Request $request, EntityManagerInterface $em, ValidatorInterface $validator) : Response
     {
@@ -41,7 +40,7 @@ class RecipeController extends AbstractController
         $response->headers->set('Content-Type', 'application/vnd.api+json');
 
         $content = $request->getContent();
-        $transformer = new JsonToRecipeTransformer();
+        $transformer = new JsonToRecipeTransformer($em);
         $recipe = $transformer->transformSingle($content);
         if ($recipe)
         {
@@ -55,6 +54,12 @@ class RecipeController extends AbstractController
 
                 $manager = new Manager();
                 $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
+                $query = $request->query;
+                if ($query->has('include'))
+                {
+                    $includes = $query->get('include');
+                    $manager->parseIncludes($includes);
+                }
                 $content = $manager->createData($resource)->toJson();
 
                 $response->setContent($content);
@@ -63,7 +68,8 @@ class RecipeController extends AbstractController
             }
             else
             {
-                $response->setContent('{"errors":"TODO: Validation errors"}');
+                #$response->setContent('{"errors":"TODO: Validation errors"}');
+                $response->setContent($errors);
                 $response->setStatusCode(Response::HTTP_BAD_REQUEST);
             }
         }
@@ -78,17 +84,16 @@ class RecipeController extends AbstractController
     /**
      * @param Request $request
      * @param EntityManagerInterface $em
-     *
      * @return Response
      *
-     * @Route("/", methods={"GET"}, name="recipe_read_all")
+     * @Route("", methods={"GET"}, name="recipe_read_all")
      */
     public function readAll(Request $request, EntityManagerInterface $em) : Response
     {
         $response = new Response();
         $response->headers->set('Content-Type', 'application/vnd.api+json');
 
-        $recipe = $em->getRepository(recipe::Class)->findAll();
+        $recipe = $em->getRepository(Recipe::class)->findAll();
         $resource = new Collection($recipe, new RecipeToJsonTransformer(), $this->type);
 
         $manager = new Manager();
@@ -111,7 +116,6 @@ class RecipeController extends AbstractController
      * @param int $id
      * @param Request $request
      * @param EntityManagerInterface $em
-     *
      * @return Response
      *
      * @Route("/{id}", methods={"GET"}, name="recipe_read")
@@ -121,7 +125,7 @@ class RecipeController extends AbstractController
         $response = new Response();
         $response->headers->set('Content-Type', 'application/vnd.api+json');
 
-        $recipe = $em->getRepository(Recipe::Class)->find($id);
+        $recipe = $em->getRepository(Recipe::class)->find($id);
         if ($recipe)
         {
             $resource = new Item($recipe, new RecipeToJsonTransformer(), $this->type);
@@ -152,7 +156,6 @@ class RecipeController extends AbstractController
      * @param Request $request
      * @param EntityManagerInterface $em
      * @param ValidatorInterface $validator
-     *
      * @return Response
      *
      * @Route("/{id}", methods={"PATCH"}, name="recipe_update")
@@ -162,14 +165,27 @@ class RecipeController extends AbstractController
         $response = new Response();
         $response->headers->set('Content-Type', 'application/vnd.api+json');
 
-        $recipe = $em->getRepository(Recipe::Class)->find($id);
+        $recipe = $em->getRepository(Recipe::class)->find($id);
         if ($recipe)
         {
             $content = $request->getContent();
-            $transformer = new JsonToRecipeTransformer();
+            $transformer = new JsonToRecipeTransformer($em);
             $recipeNew = $transformer->transformSingle($content);
             if ($recipeNew)
             {
+                if (is_null($recipeNew->getIngredients()))
+                {
+                    $recipeNew->setIngredients($recipe->getIngredients());
+                }
+                if (is_null($recipeNew->getCategory()))
+                {
+                    $recipeNew->setCategory($recipe->getCategory());
+                }
+                if (is_null($recipeNew->getTags()))
+                {
+                    $recipeNew->setTags($recipe->getTags());
+                }
+
                 $errors = $validator->validate($recipeNew);
                 if (count($errors) == 0)
                 {
@@ -183,6 +199,12 @@ class RecipeController extends AbstractController
 
                     $manager = new Manager();
                     $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
+                    $query = $request->query;
+                    if ($query->has('include'))
+                    {
+                        $includes = $query->get('include');
+                        $manager->parseIncludes($includes);
+                    }
                     $content = $manager->createData($resource)->toJson();
 
                     $response->setContent($content);
@@ -191,7 +213,8 @@ class RecipeController extends AbstractController
                 }
                 else
                 {
-                    $response->setContent('{"errors":"TODO: Validation errors"}');
+                    #$response->setContent('{"errors":"TODO: Validation errors"}');
+                    $response->setContent($errors);
                     $response->setStatusCode(Response::HTTP_BAD_REQUEST);
                 }
             }
@@ -211,7 +234,6 @@ class RecipeController extends AbstractController
     /**
      * @param int $id
      * @param EntityManagerInterface $em
-     *
      * @return Response
      *
      * @Route("/{id}", methods={"DELETE"}, name="recipe_delete")

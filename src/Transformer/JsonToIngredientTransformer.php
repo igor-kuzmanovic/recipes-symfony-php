@@ -7,34 +7,65 @@ use App\Entity\Ingredient;
 class JsonToIngredientTransformer extends JsonToObjectTransformer
 {
     /**
-     * @param array $data
-     *
-     * @return Ingredient
+     * @param object $object
+     * @param array $relationships
+     * @return void
      */
-    protected function transform(array $data)
+    protected function applyRelationships(object &$object, array $relationships)
     {
-        $ingredient = new Ingredient();
+        $ingredient = $object;
+    }
 
-        $id = $this->getId($data);
-        if ($id > 0)
-        {
-            $ingredient->setId($id);
-        }
+    /**
+     * @param object $object
+     * @param array $attributes
+     * @return void
+     */
+    protected function applyAttributes(object &$object, array $attributes)
+    {
+        $ingredient = $object;
 
-        $type = $this->getType($data);
-
-        $attributes = $this->getAttributes($data);
         if (key_exists('name', $attributes))
         {
             $ingredient->setName($attributes['name']);
         }
+    }
 
-        return $ingredient;
+    /**
+     * @param object $object
+     * @param int $id
+     * @return void
+     */
+    protected function applyId(object &$object, int $id)
+    {
+        $ingredient = $object;
+
+        if ($id > 0)
+        {
+            $ingredient->setId($id);
+        }
+    }
+
+    /**
+     * @param object &$object
+     * @param array $data
+     * @return void
+     */
+    protected function transform(object &$object, array $data)
+    {
+        $ingredient = $object;
+
+        $id = $this->getId($data);
+        $this->applyId($ingredient, $id);
+
+        $type = $this->getType($data);
+
+        $attributes = $this->getAttributes($data);
+        $this->applyAttributes($ingredient, $attributes);
     }
 
     /**
      * @param string $content
-     *
      * @return Ingredient
      */
     public function transformSingle(string $content)
@@ -43,14 +74,13 @@ class JsonToIngredientTransformer extends JsonToObjectTransformer
 
         $json = json_decode($content, true);
         $data = $this->getData($json);
-        $ingredient = $this->transform($data);
+        $this->transform($ingredient, $data);
 
         return $ingredient;
     }
 
     /**
      * @param string $content
-     *
      * @return array
      */
     public function transformMany(string $content)
@@ -61,7 +91,9 @@ class JsonToIngredientTransformer extends JsonToObjectTransformer
         $data = $this->getData($json);
         foreach ($data as $datum)
         {
-            $ingredients[] = $this->transform($datum);
+            $ingredient = new Ingredient();
+            $this->transform($ingredient, $datum);
+            $ingredients[] = $ingredient;
         }
 
         return $ingredients;

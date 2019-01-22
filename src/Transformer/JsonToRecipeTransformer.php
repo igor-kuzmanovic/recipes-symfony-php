@@ -2,28 +2,84 @@
 
 namespace App\Transformer;
 
+use App\Entity\Category;
+use App\Entity\Ingredient;
 use App\Entity\Recipe;
+use App\Entity\Tag;
 
 class JsonToRecipeTransformer extends JsonToObjectTransformer
 {
     /**
-     * @param array $data
-     *
-     * @return Recipe
+     * @param object &$object
+     * @param array $relationships
+     * @return void
      */
-    protected function transform(array $data)
+    protected function applyRelationships(object &$object, array $relationships)
     {
-        $recipe = new Recipe();
+        $recipe = $object;
 
-        $id = $this->getId($data);
-        if ($id > 0)
+        if (key_exists('ingredients', $relationships))
         {
-            $recipe->setId($id);
+            $ingredientsRelationship = $relationships['ingredients'];
+            $ingredientsData = $this->getData($ingredientsRelationship);
+
+            $ids = $this->getIds($ingredientsData);
+            foreach ($ids as $id)
+            {
+                $ingredient = $this->em->getRepository(Ingredient::class)->find($id);
+                if (!$recipe->getIngredients()->contains($ingredient))
+                {
+                    $recipe->getIngredients()->add($ingredient);
+                }
+            }
         }
+        else
+        {
+            $recipe->setIngredients(null);
+        }
+        if (key_exists('category', $relationships))
+        {
+            $categoryRelationship = $relationships['category'];
+            $categoryData = $this->getData($categoryRelationship);
+            $id = $this->getId($categoryData);
 
-        $type = $this->getType($data);
+            $category = $this->em->getRepository(Category::class)->find($id);
+            $recipe->setCategory($category);
+        }
+        else
+        {
+            $recipe->setCategory(null);
+        }
+        if (key_exists('tags', $relationships))
+        {
+            $tagsRelationship = $relationships['tags'];
+            $tagsData = $this->getData($tagsRelationship);
 
-        $attributes = $this->getAttributes($data);
+            $ids = $this->getIds($tagsData);
+            foreach ($ids as $id)
+            {
+                $tag = $this->em->getRepository(Tag::class)->find($id);
+                if (!$recipe->getTags()->contains($tag))
+                {
+                    $recipe->getTags()->add($tag);
+                }
+            }
+        }
+        else
+        {
+            $recipe->setTags(null);
+        }
+    }
+
+    /**
+     * @param object &$object
+     * @param array $attributes
+     * @return void
+     */
+    protected function applyAttributes(object &$object, array $attributes)
+    {
+        $recipe = $object;
+
         if (key_exists('title', $attributes))
         {
             $recipe->setTitle($attributes['title']);
@@ -36,30 +92,46 @@ class JsonToRecipeTransformer extends JsonToObjectTransformer
         {
             $recipe->setDate($attributes['date']);
         }
+    }
+
+    /**
+     * @param object &$object
+     * @param int $id
+     * @return void
+     */
+    protected function applyId(object &$object, int $id)
+    {
+        $recipe = $object;
+
+        if ($id > 0)
+        {
+            $recipe->setId($id);
+        }
+    }
+    
+    /**
+     * @param object &$object
+     * @param array $data
+     * @return void
+     */
+    protected function transform(object &$object, array $data)
+    {
+        $recipe = $object;
+
+        $id = $this->getId($data);
+        $this->applyid($recipe, $id);
+
+        $type = $this->getType($data);
+
+        $attributes = $this->getAttributes($data);
+        $this->applyAttributes($recipe, $attributes);
 
         $relationships = $this->getRelationships($data);
-        if (key_exists('ingredients', $relationships))
-        {
-            $transformer = new JsonToIngredientTransformer();
-            $recipe->setIngredients($transformer->transformMany($relationships['ingredients']));
-        }
-        if (key_exists('category', $relationships))
-        {
-            $transformer = new JsonToCategoryTransformer();
-            $recipe->setCategory($transformer->transformSingle($relationships['category']));
-        }
-        if (key_exists('tags', $relationships))
-        {
-            $transformer = new JsonToTagTransformer();
-            $recipe->setTags($transformer->transformMany($relationships['tags']));
-        }
-
-        return $recipe;
+        $this->applyRelationships($recipe, $relationships);
     }
 
     /**
      * @param string $content
-     *
      * @return Recipe
      */
     public function transformSingle(string $content)
@@ -68,14 +140,13 @@ class JsonToRecipeTransformer extends JsonToObjectTransformer
 
         $json = json_decode($content, true);
         $data = $this->getData($json);
-        $recipe = $this->transform($data);
+        $this->transform($recipe, $data);
 
         return $recipe;
     }
 
     /**
      * @param string $content
-     *
      * @return array
      */
     public function transformMany(string $content)
@@ -86,7 +157,9 @@ class JsonToRecipeTransformer extends JsonToObjectTransformer
         $data = $this->getData($json);
         foreach ($data as $datum)
         {
-            $recipes[] = $this->transform($datum);
+            $recipe = new Recipe();
+            $this->transform($recipe, $datum);
+            $recipes[] = $recipe;
         }
 
         return $recipes;

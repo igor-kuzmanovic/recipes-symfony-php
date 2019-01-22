@@ -9,7 +9,6 @@ class CategoryToJsonTransformer extends Fractal\TransformerAbstract
 {
     /**
      * @param Category $category
-     *
      * @return array
      */
     public function transform(Category $category)

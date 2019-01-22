@@ -29,10 +29,9 @@ class CategoryController extends AbstractController
      * @param Request $request
      * @param EntityManagerInterface $em
      * @param ValidatorInterface $validator
-     *
      * @return Response
      *
-     * @Route("/", methods={"POST"}, name="category_create")
+     * @Route("", methods={"POST"}, name="category_create")
      */
     public function create(Request $request, EntityManagerInterface $em, ValidatorInterface $validator) : Response
     {
@@ -75,10 +74,9 @@ class CategoryController extends AbstractController
     /**
      * @param Request $request
      * @param EntityManagerInterface $em
-     *
      * @return Response
      *
-     * @Route("/", methods={"GET"}, name="category_read_all")
+     * @Route("", methods={"GET"}, name="category_read_all")
      */
     public function readAll(Request $request, EntityManagerInterface $em) : Response
     {
@@ -102,7 +100,6 @@ class CategoryController extends AbstractController
      * @param int $id
      * @param Request $request
      * @param EntityManagerInterface $em
-     *
      * @return Response
      *
      * @Route("/{id}", methods={"GET"}, name="category_read")
@@ -137,7 +134,6 @@ class CategoryController extends AbstractController
      * @param Request $request
      * @param EntityManagerInterface $em
      * @param ValidatorInterface $validator
-     *
      * @return Response
      *
      * @Route("/{id}", methods={"PATCH"}, name="category_update")
@@ -191,7 +187,6 @@ class CategoryController extends AbstractController
     /**
      * @param int $id
      * @param EntityManagerInterface $em
-     *
      * @return Response
      *
      * @Route("/{id}", methods={"DELETE"}, name="category_delete")

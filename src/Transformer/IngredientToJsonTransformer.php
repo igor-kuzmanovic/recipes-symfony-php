@@ -9,7 +9,6 @@ class IngredientToJsonTransformer extends Fractal\TransformerAbstract
 {
     /**
      * @param Ingredient $ingredient
-     *
      * @return array
      */
     public function transform(Ingredient $ingredient)

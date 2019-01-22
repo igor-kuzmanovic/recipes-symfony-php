@@ -101,7 +101,7 @@ class Recipe
         return $this;
     }
 
-    public function getIngredients(): Collection
+    public function getIngredients(): ?Collection
     {
         return $this->ingredients;
     }
@@ -125,7 +125,7 @@ class Recipe
         return $this;
     }
 
-    public function getTags(): Collection
+    public function getTags(): ?Collection
     {
         return $this->tags;
     }
