@@ -42,9 +42,11 @@ class IngredientController extends AbstractController
         $content = $request->getContent();
         $transformer = new JsonToIngredientTransformer();
         $ingredient = $transformer->transformSingle($content);
+
         if ($ingredient)
         {
             $errors = $validator->validate($ingredient);
+
             if (count($errors) == 0)
             {
                 $em->persist($ingredient);
@@ -114,6 +116,7 @@ class IngredientController extends AbstractController
         $response->headers->set('Content-Type', 'application/vnd.api+json');
 
         $ingredient = $em->getRepository(Ingredient::Class)->find($id);
+
         if ($ingredient)
         {
             $resource = new Item($ingredient, new IngredientToJsonTransformer(), $this->type);
@@ -148,14 +151,17 @@ class IngredientController extends AbstractController
         $response->headers->set('Content-Type', 'application/vnd.api+json');
 
         $ingredient = $em->getRepository(Ingredient::Class)->find($id);
+
         if ($ingredient)
         {
             $content = $request->getContent();
             $transformer = new JsonToIngredientTransformer();
             $ingredientNew = $transformer->transformSingle($content);
+
             if ($ingredientNew)
             {
                 $errors = $validator->validate($ingredient);
+
                 if (count($errors) == 0)
                 {
                     $ingredient->setName($ingredientNew->getName());
@@ -203,6 +209,7 @@ class IngredientController extends AbstractController
         $response = new Response();
 
         $ingredient = $em->getRepository(Ingredient::Class)->find($id);
+
         if ($ingredient)
         {
             $em->remove($ingredient);

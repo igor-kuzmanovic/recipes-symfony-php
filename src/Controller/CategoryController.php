@@ -42,9 +42,11 @@ class CategoryController extends AbstractController
         $content = $request->getContent();
         $transformer = new JsonToCategoryTransformer();
         $category = $transformer->transformSingle($content);
+
         if ($category)
         {
             $errors = $validator->validate($category);
+
             if (count($errors) == 0) {
                 $em->persist($category);
                 $em->flush();
@@ -113,6 +115,7 @@ class CategoryController extends AbstractController
         $response->headers->set('Content-Type', 'application/vnd.api+json');
 
         $category = $em->getRepository(Category::Class)->find($id);
+
         if ($category)
         {
             $resource = new Item($category, new CategoryToJsonTransformer(), $this->type);
@@ -147,14 +150,17 @@ class CategoryController extends AbstractController
         $response->headers->set('Content-Type', 'application/vnd.api+json');
 
         $category = $em->getRepository(Category::Class)->find($id);
+
         if ($category)
         {
             $content = $request->getContent();
             $transformer = new JsonToCategoryTransformer();
             $categoryNew = $transformer->transformSingle($content);
+
             if ($categoryNew)
             {
                 $errors = $validator->validate($categoryNew);
+
                 if (count($errors) == 0) {
                     $category->setName($categoryNew->getName());
                     $em->flush();
@@ -201,6 +207,7 @@ class CategoryController extends AbstractController
         $response = new Response();
 
         $category = $em->getRepository(Category::Class)->find($id);
+
         if ($category)
         {
             $em->remove($category);

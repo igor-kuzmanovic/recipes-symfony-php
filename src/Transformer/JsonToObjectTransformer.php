@@ -2,11 +2,11 @@
 
 namespace App\Transformer;
 
-use App\Entity\Tag;
 use Doctrine\ORM\EntityManagerInterface;
 
 abstract class JsonToObjectTransformer
 {
+    protected $className;
     protected $em;
 
     public function __construct(EntityManagerInterface $em = null)
@@ -44,15 +44,39 @@ abstract class JsonToObjectTransformer
 
     /**
      * @param string $content
-     * @return void
+     * @return object
      */
-    abstract public function transformSingle(string $content);
+    public function transformSingle(string $content)
+    {
+        $recipe = new $this->className;
+
+        $json = json_decode($content, true);
+        $data = $this->getData($json);
+        $this->transform($recipe, $data);
+
+        return $recipe;
+    }
 
     /**
      * @param string $content
-     * @return object
+     * @return array
      */
-    abstract public function transformMany(string $content);
+    public function transformMany(string $content)
+    {
+        $recipes = [];
+
+        $json = json_decode($content, true);
+        $data = $this->getData($json);
+
+        foreach ($data as $datum)
+        {
+            $recipe = new $this->className;
+            $this->transform($recipe, $datum);
+            $recipes[] = $recipe;
+        }
+
+        return $recipes;
+    }
 
     /**
      * @param array $json

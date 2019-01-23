@@ -3,9 +3,17 @@
 namespace App\Transformer;
 
 use App\Entity\Tag;
+use Doctrine\ORM\EntityManagerInterface;
 
 class JsonToTagTransformer extends JsonToObjectTransformer
 {
+    public function __construct(EntityManagerInterface $em = null)
+    {
+        parent::__construct($em);
+
+        $this->className = Tag::class;
+    }
+
     /**
      * @param object &$object
      * @param array $relationships
@@ -62,40 +70,5 @@ class JsonToTagTransformer extends JsonToObjectTransformer
 
         $attributes = $this->getAttributes($data);
         $this->applyAttributes($tag, $attributes);
-    }
-
-    /**
-     * @param string $content
-     * @return Tag
-     */
-    public function transformSingle(string $content)
-    {
-        $tag = new Tag();
-
-        $json = json_decode($content, true);
-        $data = $this->getData($json);
-        $this->transform($tag, $data);
-
-        return $tag;
-    }
-
-    /**
-     * @param string $content
-     * @return array
-     */
-    public function transformMany(string $content)
-    {
-        $tags = [];
-
-        $json = json_decode($content, true);
-        $data = $this->getData($json);
-        foreach ($data as $datum)
-        {
-            $tag = new Tag();
-            $this->transform($tag, $datum);
-            $tags[] = $tag;
-        }
-
-        return $tags;
     }
 }

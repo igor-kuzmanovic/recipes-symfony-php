@@ -42,9 +42,11 @@ class TagController extends AbstractController
         $content = $request->getContent();
         $transformer = new JsonToTagTransformer();
         $tag = $transformer->transformSingle($content);
+
         if ($tag)
         {
             $errors = $validator->validate($tag);
+
             if (count($errors) == 0)
             {
                 $em->persist($tag);
@@ -114,6 +116,7 @@ class TagController extends AbstractController
         $response->headers->set('Content-Type', 'application/vnd.api+json');
 
         $tag = $em->getRepository(Tag::Class)->find($id);
+
         if ($tag)
         {
             $resource = new Item($tag, new TagToJsonTransformer(), $this->type);
@@ -148,14 +151,17 @@ class TagController extends AbstractController
         $response->headers->set('Content-Type', 'application/vnd.api+json');
 
         $tag = $em->getRepository(Tag::Class)->find($id);
+
         if ($tag)
         {
             $content = $request->getContent();
             $transformer = new JsonToTagTransformer();
             $tagNew = $transformer->transformSingle($content);
+
             if ($tagNew)
             {
                 $errors = $validator->validate($tagNew);
+
                 if (count($errors) == 0)
                 {
                     $tag->setName($tagNew->getName());
@@ -203,6 +209,7 @@ class TagController extends AbstractController
         $response = new Response();
 
         $tag = $em->getRepository(Tag::Class)->find($id);
+
         if ($tag)
         {
             $em->remove($tag);

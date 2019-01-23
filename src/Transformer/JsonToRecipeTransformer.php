@@ -6,9 +6,17 @@ use App\Entity\Category;
 use App\Entity\Ingredient;
 use App\Entity\Recipe;
 use App\Entity\Tag;
+use Doctrine\ORM\EntityManagerInterface;
 
 class JsonToRecipeTransformer extends JsonToObjectTransformer
 {
+    public function __construct(EntityManagerInterface $em = null)
+    {
+        parent::__construct($em);
+
+        $this->className = Recipe::class;
+    }
+
     /**
      * @param object &$object
      * @param array $relationships
@@ -24,9 +32,11 @@ class JsonToRecipeTransformer extends JsonToObjectTransformer
             $ingredientsData = $this->getData($ingredientsRelationship);
 
             $ids = $this->getIds($ingredientsData);
+
             foreach ($ids as $id)
             {
                 $ingredient = $this->em->getRepository(Ingredient::class)->find($id);
+
                 if (!$recipe->getIngredients()->contains($ingredient))
                 {
                     $recipe->getIngredients()->add($ingredient);
@@ -56,6 +66,7 @@ class JsonToRecipeTransformer extends JsonToObjectTransformer
             $tagsData = $this->getData($tagsRelationship);
 
             $ids = $this->getIds($tagsData);
+
             foreach ($ids as $id)
             {
                 $tag = $this->em->getRepository(Tag::class)->find($id);
@@ -84,10 +95,12 @@ class JsonToRecipeTransformer extends JsonToObjectTransformer
         {
             $recipe->setTitle($attributes['title']);
         }
+
         if (key_exists('description', $attributes))
         {
             $recipe->setDescription($attributes['description']);
         }
+
         if (key_exists('date', $attributes))
         {
             $recipe->setDate($attributes['date']);
@@ -128,40 +141,5 @@ class JsonToRecipeTransformer extends JsonToObjectTransformer
 
         $relationships = $this->getRelationships($data);
         $this->applyRelationships($recipe, $relationships);
-    }
-
-    /**
-     * @param string $content
-     * @return Recipe
-     */
-    public function transformSingle(string $content)
-    {
-        $recipe = new Recipe();
-
-        $json = json_decode($content, true);
-        $data = $this->getData($json);
-        $this->transform($recipe, $data);
-
-        return $recipe;
-    }
-
-    /**
-     * @param string $content
-     * @return array
-     */
-    public function transformMany(string $content)
-    {
-        $recipes = [];
-
-        $json = json_decode($content, true);
-        $data = $this->getData($json);
-        foreach ($data as $datum)
-        {
-            $recipe = new Recipe();
-            $this->transform($recipe, $datum);
-            $recipes[] = $recipe;
-        }
-
-        return $recipes;
     }
 }

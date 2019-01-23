@@ -3,9 +3,17 @@
 namespace App\Transformer;
 
 use App\Entity\Category;
+use Doctrine\ORM\EntityManagerInterface;
 
 class JsonToCategoryTransformer extends JsonToObjectTransformer
 {
+    public function __construct(EntityManagerInterface $em = null)
+    {
+        parent::__construct($em);
+
+        $this->className = Category::class;
+    }
+
     /**
      * @param object $object
      * @param array $relationships
@@ -62,40 +70,5 @@ class JsonToCategoryTransformer extends JsonToObjectTransformer
 
         $attributes = $this->getAttributes($data);
         $this->applyAttributes($category, $attributes);
-    }
-
-    /**
-     * @param string $content
-     * @return Category
-     */
-    public function transformSingle(string $content)
-    {
-        $category = new Category();
-
-        $json = json_decode($content, true);
-        $data = $this->getData($json);
-        $this->transform($category,$data);
-
-        return $category;
-    }
-
-    /**
-     * @param string $content
-     * @return array
-     */
-    public function transformMany(string $content)
-    {
-        $categories = [];
-
-        $json = json_decode($content, true);
-        $data = $this->getData($json);
-        foreach ($data as $datum)
-        {
-            $category = new Tag();
-            $this->transform($category, $datum);
-            $categories[] = $category;
-        }
-
-        return $categories;
     }
 }

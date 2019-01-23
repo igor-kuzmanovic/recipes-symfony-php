@@ -96,6 +96,7 @@ class RecipeController extends AbstractController
         $response->headers->set('Content-Type', 'application/vnd.api+json');
 
         $query = $request->query;
+
         if ($query->has('filter'))
         {
             $filter = $query->get('filter');
@@ -105,15 +106,18 @@ class RecipeController extends AbstractController
         {
             $recipe = $em->getRepository(Recipe::class)->findAll();
         }
+
         $resource = new Collection($recipe, new RecipeToJsonTransformer(), $this->type);
 
         $manager = new Manager();
         $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
+
         if ($query->has('include'))
         {
             $includes = $query->get('include');
             $manager->parseIncludes($includes);
         }
+
         $content = $manager->createData($resource)->toJson();
 
         $response->setContent($content);
@@ -136,6 +140,7 @@ class RecipeController extends AbstractController
         $response->headers->set('Content-Type', 'application/vnd.api+json');
 
         $recipe = $em->getRepository(Recipe::class)->find($id);
+
         if ($recipe)
         {
             $resource = new Item($recipe, new RecipeToJsonTransformer(), $this->type);
@@ -143,11 +148,13 @@ class RecipeController extends AbstractController
             $manager = new Manager();
             $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
             $query = $request->query;
+
             if ($query->has('include'))
             {
                 $includes = $query->get('include');
                 $manager->parseIncludes($includes);
             }
+
             $content = $manager->createData($resource)->toJson();
 
             $response->setContent($content);
@@ -176,27 +183,32 @@ class RecipeController extends AbstractController
         $response->headers->set('Content-Type', 'application/vnd.api+json');
 
         $recipe = $em->getRepository(Recipe::class)->find($id);
+
         if ($recipe)
         {
             $content = $request->getContent();
             $transformer = new JsonToRecipeTransformer($em);
             $recipeNew = $transformer->transformSingle($content);
+
             if ($recipeNew)
             {
                 if (is_null($recipeNew->getIngredients()))
                 {
                     $recipeNew->setIngredients($recipe->getIngredients());
                 }
+
                 if (is_null($recipeNew->getCategory()))
                 {
                     $recipeNew->setCategory($recipe->getCategory());
                 }
+
                 if (is_null($recipeNew->getTags()))
                 {
                     $recipeNew->setTags($recipe->getTags());
                 }
 
                 $errors = $validator->validate($recipeNew);
+
                 if (count($errors) == 0)
                 {
                     $recipe->setTitle($recipeNew->getTitle());
@@ -210,11 +222,13 @@ class RecipeController extends AbstractController
                     $manager = new Manager();
                     $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
                     $query = $request->query;
+
                     if ($query->has('include'))
                     {
                         $includes = $query->get('include');
                         $manager->parseIncludes($includes);
                     }
+
                     $content = $manager->createData($resource)->toJson();
 
                     $response->setContent($content);
@@ -254,6 +268,7 @@ class RecipeController extends AbstractController
         $response = new Response();
 
         $recipe = $em->getRepository(Recipe::Class)->find($id);
+
         if ($recipe)
         {
             $em->remove($recipe);

@@ -3,9 +3,17 @@
 namespace App\Transformer;
 
 use App\Entity\Ingredient;
+use Doctrine\ORM\EntityManagerInterface;
 
 class JsonToIngredientTransformer extends JsonToObjectTransformer
 {
+    public function __construct(EntityManagerInterface $em = null)
+    {
+        parent::__construct($em);
+
+        $this->className = Ingredient::class;
+    }
+
     /**
      * @param object $object
      * @param array $relationships
@@ -62,40 +70,5 @@ class JsonToIngredientTransformer extends JsonToObjectTransformer
 
         $attributes = $this->getAttributes($data);
         $this->applyAttributes($ingredient, $attributes);
-    }
-
-    /**
-     * @param string $content
-     * @return Ingredient
-     */
-    public function transformSingle(string $content)
-    {
-        $ingredient = new Ingredient();
-
-        $json = json_decode($content, true);
-        $data = $this->getData($json);
-        $this->transform($ingredient, $data);
-
-        return $ingredient;
-    }
-
-    /**
-     * @param string $content
-     * @return array
-     */
-    public function transformMany(string $content)
-    {
-        $ingredients = [];
-
-        $json = json_decode($content, true);
-        $data = $this->getData($json);
-        foreach ($data as $datum)
-        {
-            $ingredient = new Ingredient();
-            $this->transform($ingredient, $datum);
-            $ingredients[] = $ingredient;
-        }
-
-        return $ingredients;
     }
 }
