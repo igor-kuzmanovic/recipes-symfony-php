@@ -23,12 +23,11 @@ class ImageController extends AbstractController
     public function upload(Request $request) : Response
     {
         $response = new Response();
-        $response->headers->set('Content-Type', 'application/vnd.api+json');
 
         $file = $request->files->get("image");
         $mimeType = $file->getMimeType();
 
-        if (preg_match('/image\/.+/', $mimeType))
+        if (preg_match('/image\/.+/', $mimeType) && $file->isValid())
         {
             $id = md5(uniqid());
             $fileName = $id.'.'.$file->guessExtension();
