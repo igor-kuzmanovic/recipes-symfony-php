@@ -20,11 +20,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 /**
  * @Route("/api/categories")
  */
-class CategoryController extends AbstractController
+class CategoryController extends BaseController
 {
-    private $type = 'categories';
-    private $apiUrl = 'http://localhost:8000/api';
-    private $baseUrl = 'http://localhost:8000/api/categories';
+    protected $type = 'categories';
 
     /**
      * @param Request $request
@@ -53,11 +51,11 @@ class CategoryController extends AbstractController
                 $resource = new Item($category, new CategoryToJsonTransformer(), $this->type);
 
                 $manager = new Manager();
-                $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
+                $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
                 $content = $manager->createData($resource)->toJson();
 
                 $response->setContent($content);
-                $response->headers->set('Location', $this->baseUrl . '/' . $category->getId());
+                $response->headers->set('Location', $this->getBaseUrl($request) . '/' . $category->getId());
                 $response->setStatusCode(Response::HTTP_CREATED);
             }
             else
@@ -92,7 +90,7 @@ class CategoryController extends AbstractController
         $resource = new Collection($category, new CategoryToJsonTransformer(), $this->type);
 
         $manager = new Manager();
-        $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
+        $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
         $content = $manager->createData($resource)->toJson();
 
         $response->setContent($content);
@@ -121,7 +119,7 @@ class CategoryController extends AbstractController
             $resource = new Item($category, new CategoryToJsonTransformer(), $this->type);
 
             $manager = new Manager();
-            $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
+            $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
             $content = $manager->createData($resource)->toJson();
 
             $response->setContent($content);
@@ -167,11 +165,11 @@ class CategoryController extends AbstractController
                     $resource = new Item($category, new CategoryToJsonTransformer(), $this->type);
 
                     $manager = new Manager();
-                    $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
+                    $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
                     $content = $manager->createData($resource)->toJson();
 
                     $response->setContent($content);
-                    $response->headers->set('Location', $this->baseUrl . '/' . $category->getId());
+                    $response->headers->set('Location', $this->getBaseUrl($request) . '/' . $category->getId());
                     $response->setStatusCode(Response::HTTP_OK);
                 }
                 else

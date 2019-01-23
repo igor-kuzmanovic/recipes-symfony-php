@@ -20,8 +20,8 @@ INSERT INTO tag (id, name) VALUES (3, 'Sweet');
 INSERT INTO tag (id, name) VALUES (4, 'Fruity');
 INSERT INTO tag (id, name) VALUES (5, 'Tangy');
 
-INSERT INTO recipe (id, title, description, date, category_id) VALUES (1, 'Pepperoni Pizza', 'A pepperoni pizza with additional hot-sauce', CURRENT_TIMESTAMP, 3);
-INSERT INTO recipe (id, title, description, date, category_id) VALUES (2, 'Vegetarian Pizza', 'A vegetarian pizza rich with vitamins.', CURRENT_TIMESTAMP, 1);
+INSERT INTO recipe (id, title, description, date, category_id, image_url) VALUES (1, 'Pepperoni Pizza', 'A pepperoni pizza with additional hot-sauce', CURRENT_TIMESTAMP, 3, 'none');
+INSERT INTO recipe (id, title, description, date, category_id, image_url) VALUES (2, 'Vegetarian Pizza', 'A vegetarian pizza rich with vitamins.', CURRENT_TIMESTAMP, 1, 'none');
 
 INSERT INTO recipe_ingredient (recipe_id, ingredient_id) VALUES (1, 1);
 INSERT INTO recipe_ingredient (recipe_id, ingredient_id) VALUES (1, 3);

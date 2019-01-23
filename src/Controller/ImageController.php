@@ -12,7 +12,16 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ImageController extends AbstractController
 {
-    private $imageUrl = 'http://localhost:8000/images';
+    private $imageDirectory = './images';
+
+    /**
+     * @param Request $request
+     * @return string
+     */
+    private function getImagesUrl(Request $request)
+    {
+        return $request->getSchemeAndHttpHost().'/images';
+    }
 
     /**
      * @param Request $request
@@ -24,21 +33,24 @@ class ImageController extends AbstractController
     {
         $response = new Response();
 
-        $file = $request->files->get("image");
-        $mimeType = $file->getMimeType();
+        if ($request->files->has('image')) {
+            $file = $request->files->get('image');
+            $mimeType = $file->getMimeType();
 
-        if (preg_match('/image\/.+/', $mimeType) && $file->isValid())
-        {
-            $id = md5(uniqid());
-            $fileName = $id.'.'.$file->guessExtension();
-            $file->move("./images", $fileName);
+            if (preg_match('/image\/.+/', $mimeType) && $file->isValid()) {
+                $id = md5(uniqid());
+                $fileName = $id . '.' . $file->guessExtension();
+                $file->move($this->imageDirectory, $fileName);
 
-            $response->headers->set('Location', $this->imageUrl.'/'.$fileName);
-            $response->setStatusCode(Response::HTTP_CREATED);
+                $response->headers->set('Location', $this->getImagesUrl($request) . '/' . $fileName);
+                $response->setStatusCode(Response::HTTP_CREATED);
+            } else {
+                $response->setStatusCode(Response::HTTP_UNSUPPORTED_MEDIA_TYPE);
+            }
         }
         else
         {
-            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
         }
 
         return $response;

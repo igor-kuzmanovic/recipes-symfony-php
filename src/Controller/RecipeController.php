@@ -20,11 +20,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 /**
  * @Route("/api/recipes")
  */
-class RecipeController extends AbstractController
+class RecipeController extends BaseController
 {
-    private $type = 'recipes';
-    private $apiUrl = 'http://localhost:8000/api';
-    private $baseUrl = 'http://localhost:8000/api/recipes';
+    protected $type = 'recipes';
 
     /**
      * @param Request $request
@@ -54,7 +52,7 @@ class RecipeController extends AbstractController
                 $resource = new Item($recipe, new RecipeToJsonTransformer(), $this->type);
 
                 $manager = new Manager();
-                $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
+                $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
                 $query = $request->query;
                 if ($query->has('include'))
                 {
@@ -64,7 +62,7 @@ class RecipeController extends AbstractController
                 $content = $manager->createData($resource)->toJson();
 
                 $response->setContent($content);
-                $response->headers->set('Location', $this->baseUrl.'/'.$recipe->getId());
+                $response->headers->set('Location', $this->getBaseUrl($request).'/'.$recipe->getId());
                 $response->setStatusCode(Response::HTTP_CREATED);
             }
             else
@@ -110,7 +108,7 @@ class RecipeController extends AbstractController
         $resource = new Collection($recipe, new RecipeToJsonTransformer(), $this->type);
 
         $manager = new Manager();
-        $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
+        $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
 
         if ($query->has('include'))
         {
@@ -146,7 +144,7 @@ class RecipeController extends AbstractController
             $resource = new Item($recipe, new RecipeToJsonTransformer(), $this->type);
 
             $manager = new Manager();
-            $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
+            $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
             $query = $request->query;
 
             if ($query->has('include'))
@@ -221,7 +219,7 @@ class RecipeController extends AbstractController
                     $resource = new Item($recipe, new RecipeToJsonTransformer(), $this->type);
 
                     $manager = new Manager();
-                    $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
+                    $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
                     $query = $request->query;
 
                     if ($query->has('include'))
@@ -233,7 +231,7 @@ class RecipeController extends AbstractController
                     $content = $manager->createData($resource)->toJson();
 
                     $response->setContent($content);
-                    $response->headers->set('Location', $this->baseUrl.'/'.$recipe->getId());
+                    $response->headers->set('Location', $this->getBaseUrl($request).'/'.$recipe->getId());
                     $response->setStatusCode(Response::HTTP_OK);
                 }
                 else

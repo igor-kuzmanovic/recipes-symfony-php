@@ -20,11 +20,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 /**
  * @Route("/api/ingredients")
  */
-class IngredientController extends AbstractController
+class IngredientController extends BaseController
 {
-    private $type = 'ingredients';
-    private $apiUrl = 'http://localhost:8000/api';
-    private $baseUrl = 'http://localhost:8000/api/ingredients';
+    protected $type = 'ingredients';
 
     /**
      * @param Request $request
@@ -54,11 +52,11 @@ class IngredientController extends AbstractController
                 $resource = new Item($ingredient, new IngredientToJsonTransformer(), $this->type);
 
                 $manager = new Manager();
-                $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
+                $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
                 $content = $manager->createData($resource)->toJson();
 
                 $response->setContent($content);
-                $response->headers->set('Location', $this->baseUrl.'/'.$ingredient->getId());
+                $response->headers->set('Location', $this->getBaseUrl($request).'/'.$ingredient->getId());
                 $response->setStatusCode(Response::HTTP_CREATED);
             }
             else
@@ -93,7 +91,7 @@ class IngredientController extends AbstractController
         $resource = new Collection($ingredients, new IngredientToJsonTransformer(), $this->type);
 
         $manager = new Manager();
-        $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
+        $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
         $content = $manager->createData($resource)->toJson();
 
         $response->setContent($content);
@@ -122,7 +120,7 @@ class IngredientController extends AbstractController
             $resource = new Item($ingredient, new IngredientToJsonTransformer(), $this->type);
 
             $manager = new Manager();
-            $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
+            $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
             $content = $manager->createData($resource)->toJson();
 
             $response->setContent($content);
@@ -169,11 +167,11 @@ class IngredientController extends AbstractController
                     $resource = new Item($ingredient, new IngredientToJsonTransformer(), $this->type);
 
                     $manager = new Manager();
-                    $manager->setSerializer(new JsonApiSerializer($this->apiUrl));
+                    $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
                     $content = $manager->createData($resource)->toJson();
 
                     $response->setContent($content);
-                    $response->headers->set('Location', $this->baseUrl.'/'.$ingredient->getId());
+                    $response->headers->set('Location', $this->getBaseUrl($request).'/'.$ingredient->getId());
                     $response->setStatusCode(Response::HTTP_OK);
                 }
                 else
