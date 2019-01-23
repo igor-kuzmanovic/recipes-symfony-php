@@ -24,7 +24,7 @@ class CategoryController extends AbstractController
 {
     private $type = 'categories';
     private $apiUrl = 'http://localhost:8000/api';
-    private $baseUrl = 'http://localhost:8000/api/categories/';
+    private $baseUrl = 'http://localhost:8000/api/categories';
 
     /**
      * @param Request $request

@@ -35,20 +35,17 @@ class Recipe
 
     /**
      * @ORM\ManyToMany(targetEntity="Ingredient")
-     * @Assert\NotBlank
      */
     private $ingredients;
 
     /**
      * @ORM\ManyToOne(targetEntity="Category")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
-     * @Assert\NotBlank
      */
     private $category;
 
     /**
      * @ORM\ManyToMany(targetEntity="Tag")
-     * @Assert\NotBlank
      */
     private $tags;
 
@@ -56,6 +53,13 @@ class Recipe
      * @ORM\Column(type="datetime")
      */
     private $date;
+
+    /**
+     * @ORM\Column(type="string")
+     * @Assert\NotBlank
+     * @Assert\Url
+     */
+    private $imageUrl;
 
     public function __construct()
     {
@@ -143,6 +147,18 @@ class Recipe
     public function setDate($date): self
     {
         $this->date = $date;
+
+        return $this;
+    }
+
+    public function getImageUrl(): ?string
+    {
+        return $this->imageUrl;
+    }
+
+    public function setImageUrl($imageUrl): self
+    {
+        $this->imageUrl = $imageUrl;
 
         return $this;
     }

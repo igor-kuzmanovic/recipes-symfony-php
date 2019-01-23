@@ -24,7 +24,7 @@ class TagController extends AbstractController
 {
     private $type = 'tags';
     private $apiUrl = 'http://localhost:8000/api';
-    private $baseUrl = 'http://localhost:8000/api/tags/';
+    private $baseUrl = 'http://localhost:8000/api/tags';
 
     /**
      * @param Request $request

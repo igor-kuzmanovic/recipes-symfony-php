@@ -24,7 +24,7 @@ class IngredientController extends AbstractController
 {
     private $type = 'ingredients';
     private $apiUrl = 'http://localhost:8000/api';
-    private $baseUrl = 'http://localhost:8000/api/ingredients/';
+    private $baseUrl = 'http://localhost:8000/api/ingredients';
 
     /**
      * @param Request $request

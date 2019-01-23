@@ -216,6 +216,7 @@ class RecipeController extends AbstractController
                     $recipe->setIngredients($recipeNew->getIngredients());
                     $recipe->setCategory($recipeNew->getCategory());
                     $recipe->setTags($recipeNew->getTags());
+                    $recipe->setImageUrl($recipeNew->getImageUrl());
                     $em->flush();
                     $resource = new Item($recipe, new RecipeToJsonTransformer(), $this->type);
 
