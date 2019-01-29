@@ -8,6 +8,7 @@
         "ext-json": "^1.6",
         "doctrine/annotations": "^1.6",
         "league/fractal": "^0.17.0",
+        "nelmio/cors-bundle": "^1.5",
         "symfony/console": "4.2.*",
         "symfony/dotenv": "4.2.*",
         "symfony/flex": "^1.1",

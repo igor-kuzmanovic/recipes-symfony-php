@@ -52,7 +52,7 @@ class RecipeController extends BaseController
                 $resource = new Item($recipe, new RecipeToJsonTransformer(), $this->type);
 
                 $manager = new Manager();
-                $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
+                $manager->setSerializer(new JsonApiSerializer());
                 $query = $request->query;
                 if ($query->has('include'))
                 {
@@ -62,7 +62,7 @@ class RecipeController extends BaseController
                 $content = $manager->createData($resource)->toJson();
 
                 $response->setContent($content);
-                $response->headers->set('Location', $this->getBaseUrl($request).'/'.$recipe->getId());
+                $response->headers->set('Location', '/'.$recipe->getId());
                 $response->setStatusCode(Response::HTTP_CREATED);
             }
             else
@@ -108,7 +108,7 @@ class RecipeController extends BaseController
         $resource = new Collection($recipe, new RecipeToJsonTransformer(), $this->type);
 
         $manager = new Manager();
-        $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
+        $manager->setSerializer(new JsonApiSerializer());
 
         if ($query->has('include'))
         {
@@ -144,7 +144,7 @@ class RecipeController extends BaseController
             $resource = new Item($recipe, new RecipeToJsonTransformer(), $this->type);
 
             $manager = new Manager();
-            $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
+            $manager->setSerializer(new JsonApiSerializer());
             $query = $request->query;
 
             if ($query->has('include'))
@@ -190,6 +190,16 @@ class RecipeController extends BaseController
 
             if ($recipeNew)
             {
+                if (is_null($recipeNew->getTitle()))
+                {
+                    $recipeNew->setTitle($recipe->getTitle());
+                }
+
+                if (is_null($recipeNew->getDescription()))
+                {
+                    $recipeNew->setDescription($recipe->getDescription());
+                }
+
                 if (is_null($recipeNew->getIngredients()))
                 {
                     $recipeNew->setIngredients($recipe->getIngredients());
@@ -203,6 +213,16 @@ class RecipeController extends BaseController
                 if (is_null($recipeNew->getTags()))
                 {
                     $recipeNew->setTags($recipe->getTags());
+                }
+
+                if (is_null($recipeNew->getImageUrl()))
+                {
+                    $recipeNew->setImageUrl($recipe->getImageUrl());
+                }
+
+                if (is_null($recipeNew->getDate()))
+                {
+                    $recipeNew->setDate($recipe->getDate());
                 }
 
                 $errors = $validator->validate($recipeNew);
@@ -219,7 +239,7 @@ class RecipeController extends BaseController
                     $resource = new Item($recipe, new RecipeToJsonTransformer(), $this->type);
 
                     $manager = new Manager();
-                    $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
+                    $manager->setSerializer(new JsonApiSerializer());
                     $query = $request->query;
 
                     if ($query->has('include'))
@@ -231,7 +251,7 @@ class RecipeController extends BaseController
                     $content = $manager->createData($resource)->toJson();
 
                     $response->setContent($content);
-                    $response->headers->set('Location', $this->getBaseUrl($request).'/'.$recipe->getId());
+                    $response->headers->set('Location', '/'.$recipe->getId());
                     $response->setStatusCode(Response::HTTP_OK);
                 }
                 else

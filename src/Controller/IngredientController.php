@@ -52,11 +52,11 @@ class IngredientController extends BaseController
                 $resource = new Item($ingredient, new IngredientToJsonTransformer(), $this->type);
 
                 $manager = new Manager();
-                $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
+                $manager->setSerializer(new JsonApiSerializer());
                 $content = $manager->createData($resource)->toJson();
 
                 $response->setContent($content);
-                $response->headers->set('Location', $this->getBaseUrl($request).'/'.$ingredient->getId());
+                $response->headers->set('Location', '/'.$ingredient->getId());
                 $response->setStatusCode(Response::HTTP_CREATED);
             }
             else
@@ -91,7 +91,7 @@ class IngredientController extends BaseController
         $resource = new Collection($ingredients, new IngredientToJsonTransformer(), $this->type);
 
         $manager = new Manager();
-        $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
+        $manager->setSerializer(new JsonApiSerializer());
         $content = $manager->createData($resource)->toJson();
 
         $response->setContent($content);
@@ -120,7 +120,7 @@ class IngredientController extends BaseController
             $resource = new Item($ingredient, new IngredientToJsonTransformer(), $this->type);
 
             $manager = new Manager();
-            $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
+            $manager->setSerializer(new JsonApiSerializer());
             $content = $manager->createData($resource)->toJson();
 
             $response->setContent($content);
@@ -167,11 +167,11 @@ class IngredientController extends BaseController
                     $resource = new Item($ingredient, new IngredientToJsonTransformer(), $this->type);
 
                     $manager = new Manager();
-                    $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
+                    $manager->setSerializer(new JsonApiSerializer());
                     $content = $manager->createData($resource)->toJson();
 
                     $response->setContent($content);
-                    $response->headers->set('Location', $this->getBaseUrl($request).'/'.$ingredient->getId());
+                    $response->headers->set('Location', '/'.$ingredient->getId());
                     $response->setStatusCode(Response::HTTP_OK);
                 }
                 else

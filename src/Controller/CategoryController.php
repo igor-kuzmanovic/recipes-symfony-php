@@ -51,11 +51,11 @@ class CategoryController extends BaseController
                 $resource = new Item($category, new CategoryToJsonTransformer(), $this->type);
 
                 $manager = new Manager();
-                $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
+                $manager->setSerializer(new JsonApiSerializer());
                 $content = $manager->createData($resource)->toJson();
 
                 $response->setContent($content);
-                $response->headers->set('Location', $this->getBaseUrl($request) . '/' . $category->getId());
+                $response->headers->set('Location', '/' . $category->getId());
                 $response->setStatusCode(Response::HTTP_CREATED);
             }
             else
@@ -90,7 +90,7 @@ class CategoryController extends BaseController
         $resource = new Collection($category, new CategoryToJsonTransformer(), $this->type);
 
         $manager = new Manager();
-        $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
+        $manager->setSerializer(new JsonApiSerializer());
         $content = $manager->createData($resource)->toJson();
 
         $response->setContent($content);
@@ -119,7 +119,7 @@ class CategoryController extends BaseController
             $resource = new Item($category, new CategoryToJsonTransformer(), $this->type);
 
             $manager = new Manager();
-            $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
+            $manager->setSerializer(new JsonApiSerializer());
             $content = $manager->createData($resource)->toJson();
 
             $response->setContent($content);
@@ -165,11 +165,11 @@ class CategoryController extends BaseController
                     $resource = new Item($category, new CategoryToJsonTransformer(), $this->type);
 
                     $manager = new Manager();
-                    $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
+                    $manager->setSerializer(new JsonApiSerializer());
                     $content = $manager->createData($resource)->toJson();
 
                     $response->setContent($content);
-                    $response->headers->set('Location', $this->getBaseUrl($request) . '/' . $category->getId());
+                    $response->headers->set('Location', '/' . $category->getId());
                     $response->setStatusCode(Response::HTTP_OK);
                 }
                 else

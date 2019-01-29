@@ -52,11 +52,11 @@ class TagController extends BaseController
                 $resource = new Item($tag, new TagToJsonTransformer(), $this->type);
 
                 $manager = new Manager();
-                $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
+                $manager->setSerializer(new JsonApiSerializer());
                 $content = $manager->createData($resource)->toJson();
 
                 $response->setContent($content);
-                $response->headers->set('Location', $this->getBaseUrl($request).'/'.$tag->getId());
+                $response->headers->set('Location', '/'.$tag->getId());
                 $response->setStatusCode(Response::HTTP_CREATED);
             }
             else
@@ -91,7 +91,7 @@ class TagController extends BaseController
         $resource = new Collection($tags, new TagToJsonTransformer(), $this->type);
 
         $manager = new Manager();
-        $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
+        $manager->setSerializer(new JsonApiSerializer());
         $content = $manager->createData($resource)->toJson();
 
         $response->setContent($content);
@@ -120,7 +120,7 @@ class TagController extends BaseController
             $resource = new Item($tag, new TagToJsonTransformer(), $this->type);
 
             $manager = new Manager();
-            $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
+            $manager->setSerializer(new JsonApiSerializer());
             $content = $manager->createData($resource)->toJson();
 
             $response->setContent($content);
@@ -167,11 +167,11 @@ class TagController extends BaseController
                     $resource = new Item($tag, new TagToJsonTransformer(), $this->type);
 
                     $manager = new Manager();
-                    $manager->setSerializer(new JsonApiSerializer($this->getApiUrl($request)));
+                    $manager->setSerializer(new JsonApiSerializer());
                     $content = $manager->createData($resource)->toJson();
 
                     $response->setContent($content);
-                    $response->headers->set('Location', $this->getBaseUrl($request) . '/' . $tag->getId());
+                    $response->headers->set('Location', '/' . $tag->getId());
                     $response->setStatusCode(Response::HTTP_OK);
                 }
                 else

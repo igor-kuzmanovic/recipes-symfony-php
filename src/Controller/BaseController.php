@@ -9,13 +9,8 @@ class BaseController extends AbstractController
 {
     protected $type = '';
 
-    protected function getApiUrl(Request $request)
+    protected function getHost(Request $request)
     {
-        return $request->getSchemeAndHttpHost().'/api';
-    }
-
-    protected function getBaseUrl(Request $request)
-    {
-        return $this->getApiUrl($request).'/'.$this->type;
+        return $request->getSchemeAndHttpHost();
     }
 }

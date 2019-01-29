@@ -106,9 +106,9 @@ class JsonToRecipeTransformer extends JsonToObjectTransformer
             $recipe->setDate($attributes['date']);
         }
 
-        if (key_exists('imageUrl', $attributes))
+        if (key_exists('image-url', $attributes))
         {
-            $recipe->setImageUrl($attributes['imageUrl']);
+            $recipe->setImageUrl($attributes['image-url']);
         }
     }
 

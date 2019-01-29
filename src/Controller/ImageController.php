@@ -10,9 +10,9 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/api/images")
  */
-class ImageController extends AbstractController
+class ImageController extends BaseController
 {
-    private $imageDirectory = './images';
+    private $imagesDirectory = './images';
 
     /**
      * @param Request $request
@@ -20,7 +20,7 @@ class ImageController extends AbstractController
      */
     private function getImagesUrl(Request $request)
     {
-        return $request->getSchemeAndHttpHost().'/images';
+        return $this->getHost($request).'/images';
     }
 
     /**
@@ -40,7 +40,7 @@ class ImageController extends AbstractController
             if (preg_match('/image\/.+/', $mimeType) && $file->isValid()) {
                 $id = md5(uniqid());
                 $fileName = $id . '.' . $file->guessExtension();
-                $file->move($this->imageDirectory, $fileName);
+                $file->move($this->imagesDirectory, $fileName);
 
                 $response->headers->set('Location', $this->getImagesUrl($request) . '/' . $fileName);
                 $response->setStatusCode(Response::HTTP_CREATED);
