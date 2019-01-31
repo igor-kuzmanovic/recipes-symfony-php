@@ -39,7 +39,8 @@ class IngredientController extends BaseController
 
         $content = $request->getContent();
         $transformer = new JsonToIngredientTransformer();
-        $ingredient = $transformer->transformSingle($content);
+        $ingredient = new Ingredient();
+        $transformer->transformSingle($ingredient, $content);
 
         if ($ingredient)
         {
@@ -205,7 +206,7 @@ class IngredientController extends BaseController
             $em->remove($ingredient);
             $em->flush();
 
-            $response->setStatusCode(Response::HTTP_ACCEPTED);
+            $response->setStatusCode(Response::HTTP_NO_CONTENT);
         }
         else
         {

@@ -40,10 +40,13 @@ class RecipeController extends BaseController
 
         $content = $request->getContent();
         $transformer = new JsonToRecipeTransformer($em);
-        $recipe = $transformer->transformSingle(new Recipe(), $content);
+        $recipe = new Recipe();
+        $transformer->transformSingle($recipe, $content);
+
         if ($recipe)
         {
             $errors = $validator->validate($recipe);
+
             if (count($errors) == 0)
             {
                 $recipe->setDate(new \DateTime('NOW'));
@@ -54,11 +57,13 @@ class RecipeController extends BaseController
                 $manager = new Manager();
                 $manager->setSerializer(new JsonApiSerializer());
                 $query = $request->query;
+
                 if ($query->has('include'))
                 {
                     $includes = $query->get('include');
                     $manager->parseIncludes($includes);
                 }
+
                 $content = $manager->createData($resource)->toJson();
 
                 $response->setContent($content);
@@ -245,7 +250,7 @@ class RecipeController extends BaseController
             $em->remove($recipe);
             $em->flush();
 
-            $response->setStatusCode(Response::HTTP_ACCEPTED);
+            $response->setStatusCode(Response::HTTP_NO_CONTENT);
         }
         else
         {

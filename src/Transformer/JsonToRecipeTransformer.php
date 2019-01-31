@@ -81,6 +81,7 @@ class JsonToRecipeTransformer extends JsonToObjectTransformer
      * @param object &$object
      * @param array $attributes
      * @return void
+     * @throws
      */
     protected function applyAttributes(object &$object, array $attributes)
     {
@@ -88,22 +89,55 @@ class JsonToRecipeTransformer extends JsonToObjectTransformer
 
         if (key_exists('title', $attributes))
         {
-            $recipe->setTitle($attributes['title']);
+            $title = $attributes['title'];
+
+            if (is_null($title))
+            {
+                $title = '';
+            }
+
+            $recipe->setTitle($title);
         }
 
         if (key_exists('description', $attributes))
         {
-            $recipe->setDescription($attributes['description']);
+            $description = $attributes['description'];
+
+            if (is_null($description))
+            {
+                $description = '';
+            }
+
+            $recipe->setDescription($description);
         }
 
         if (key_exists('date', $attributes))
         {
-            $recipe->setDate($attributes['date']);
+            $date = $attributes['date'];
+
+            if (is_null($date))
+            {
+                $date = '';
+            }
+
+            if (is_string($date))
+            {
+                $date = new \DateTime($date);
+            }
+
+            $recipe->setDate($date);
         }
 
         if (key_exists('image-url', $attributes))
         {
-            $recipe->setImageUrl($attributes['image-url']);
+            $imageUrl = $attributes['image-url'];
+
+            if (is_null($imageUrl))
+            {
+                $imageUrl = '';
+            }
+
+            $recipe->setImageUrl($imageUrl);
         }
     }
 

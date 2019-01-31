@@ -39,7 +39,8 @@ class TagController extends BaseController
 
         $content = $request->getContent();
         $transformer = new JsonToTagTransformer();
-        $tag = $transformer->transformSingle(new Tag(), $content);
+        $tag = new Tag();
+        $transformer->transformSingle($tag, $content);
 
         if ($tag)
         {
@@ -205,7 +206,7 @@ class TagController extends BaseController
             $em->remove($tag);
             $em->flush();
 
-            $response->setStatusCode(Response::HTTP_ACCEPTED);
+            $response->setStatusCode(Response::HTTP_NO_CONTENT);
         }
         else
         {

@@ -39,7 +39,8 @@ class CategoryController extends BaseController
 
         $content = $request->getContent();
         $transformer = new JsonToCategoryTransformer();
-        $category = $transformer->transformSingle(new Category(), $content);
+        $category = new Category();
+        $transformer->transformSingle($category, $content);
 
         if ($category)
         {
@@ -203,7 +204,7 @@ class CategoryController extends BaseController
             $em->remove($category);
             $em->flush();
 
-            $response->setStatusCode(Response::HTTP_ACCEPTED);
+            $response->setStatusCode(Response::HTTP_NO_CONTENT);
         }
         else
         {

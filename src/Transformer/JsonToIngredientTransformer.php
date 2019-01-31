@@ -35,7 +35,14 @@ class JsonToIngredientTransformer extends JsonToObjectTransformer
 
         if (key_exists('name', $attributes))
         {
-            $ingredient->setName($attributes['name']);
+            $name = $attributes['name'];
+
+            if (is_null($name))
+            {
+                $name = '';
+            }
+
+            $ingredient->setName($name);
         }
     }
 

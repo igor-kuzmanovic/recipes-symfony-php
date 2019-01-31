@@ -35,7 +35,14 @@ class JsonToTagTransformer extends JsonToObjectTransformer
 
         if (key_exists('name', $attributes))
         {
-            $tag->setName($attributes['name']);
+            $name = $attributes['name'];
+
+            if (is_null($name))
+            {
+                $name = '';
+            }
+
+            $tag->setName($name);
         }
     }
 

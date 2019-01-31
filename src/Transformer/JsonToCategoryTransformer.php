@@ -35,7 +35,14 @@ class JsonToCategoryTransformer extends JsonToObjectTransformer
 
         if (key_exists('name', $attributes))
         {
-            $category->setName($attributes['name']);
+            $name = $attributes['name'];
+
+            if (is_null($name))
+            {
+                $name = '';
+            }
+
+            $category->setName($name);
         }
     }
 

@@ -70,6 +70,7 @@ abstract class JsonToObjectTransformer
         if (is_null($objects)) {
             $objects = [];
         }
+
         $json = json_decode($content, true);
         $data = $this->getData($json);
 
