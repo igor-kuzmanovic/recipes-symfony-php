@@ -154,37 +154,29 @@ class IngredientController extends BaseController
         {
             $content = $request->getContent();
             $transformer = new JsonToIngredientTransformer();
-            $ingredientNew = $transformer->transformSingle($content);
+            $transformer->transformSingle($ingredient, $content);
 
-            if ($ingredientNew)
+            $errors = $validator->validate($ingredient);
+
+            if (count($errors) == 0)
             {
-                $errors = $validator->validate($ingredient);
+                $em->flush();
+                $resource = new Item($ingredient, new IngredientToJsonTransformer(), $this->type);
 
-                if (count($errors) == 0)
-                {
-                    $ingredient->setName($ingredientNew->getName());
-                    $em->flush();
-                    $resource = new Item($ingredient, new IngredientToJsonTransformer(), $this->type);
+                $manager = new Manager();
+                $manager->setSerializer(new JsonApiSerializer());
+                $content = $manager->createData($resource)->toJson();
 
-                    $manager = new Manager();
-                    $manager->setSerializer(new JsonApiSerializer());
-                    $content = $manager->createData($resource)->toJson();
-
-                    $response->setContent($content);
-                    $response->headers->set('Location', '/'.$ingredient->getId());
-                    $response->setStatusCode(Response::HTTP_OK);
-                }
-                else
-                {
-                    $transformer = new ErrorToJsonTransformer();
-                    $errorMessage = $transformer->transform($errors);
-                    $response->setContent($errorMessage);
-                    $response->setStatusCode(Response::HTTP_BAD_REQUEST);
-                }
+                $response->setContent($content);
+                $response->headers->set('Location', '/'.$ingredient->getId());
+                $response->setStatusCode(Response::HTTP_OK);
             }
             else
             {
-                $response->setStatusCode(Response::HTTP_FORBIDDEN);
+                $transformer = new ErrorToJsonTransformer();
+                $errorMessage = $transformer->transform($errors);
+                $response->setContent($errorMessage);
+                $response->setStatusCode(Response::HTTP_BAD_REQUEST);
             }
         }
         else

@@ -39,7 +39,7 @@ class CategoryController extends BaseController
 
         $content = $request->getContent();
         $transformer = new JsonToCategoryTransformer();
-        $category = $transformer->transformSingle($content);
+        $category = $transformer->transformSingle(new Category(), $content);
 
         if ($category)
         {
@@ -153,36 +153,28 @@ class CategoryController extends BaseController
         {
             $content = $request->getContent();
             $transformer = new JsonToCategoryTransformer();
-            $categoryNew = $transformer->transformSingle($content);
+            $transformer->transformSingle($category, $content);
 
-            if ($categoryNew)
-            {
-                $errors = $validator->validate($categoryNew);
+            $errors = $validator->validate($category);
 
-                if (count($errors) == 0) {
-                    $category->setName($categoryNew->getName());
-                    $em->flush();
-                    $resource = new Item($category, new CategoryToJsonTransformer(), $this->type);
+            if (count($errors) == 0) {
+                $em->flush();
+                $resource = new Item($category, new CategoryToJsonTransformer(), $this->type);
 
-                    $manager = new Manager();
-                    $manager->setSerializer(new JsonApiSerializer());
-                    $content = $manager->createData($resource)->toJson();
+                $manager = new Manager();
+                $manager->setSerializer(new JsonApiSerializer());
+                $content = $manager->createData($resource)->toJson();
 
-                    $response->setContent($content);
-                    $response->headers->set('Location', '/' . $category->getId());
-                    $response->setStatusCode(Response::HTTP_OK);
-                }
-                else
-                {
-                    $transformer = new ErrorToJsonTransformer();
-                    $errorMessage = $transformer->transform($errors);
-                    $response->setContent($errorMessage);
-                    $response->setStatusCode(Response::HTTP_BAD_REQUEST);
-                }
+                $response->setContent($content);
+                $response->headers->set('Location', '/' . $category->getId());
+                $response->setStatusCode(Response::HTTP_OK);
             }
             else
             {
-                $response->setStatusCode(Response::HTTP_FORBIDDEN);
+                $transformer = new ErrorToJsonTransformer();
+                $errorMessage = $transformer->transform($errors);
+                $response->setContent($errorMessage);
+                $response->setStatusCode(Response::HTTP_BAD_REQUEST);
             }
         }
         else

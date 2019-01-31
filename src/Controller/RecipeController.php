@@ -40,7 +40,7 @@ class RecipeController extends BaseController
 
         $content = $request->getContent();
         $transformer = new JsonToRecipeTransformer($em);
-        $recipe = $transformer->transformSingle($content);
+        $recipe = $transformer->transformSingle(new Recipe(), $content);
         if ($recipe)
         {
             $errors = $validator->validate($recipe);
@@ -186,85 +186,37 @@ class RecipeController extends BaseController
         {
             $content = $request->getContent();
             $transformer = new JsonToRecipeTransformer($em);
-            $recipeNew = $transformer->transformSingle($content);
+            $transformer->transformSingle($recipe, $content);
 
-            if ($recipeNew)
+            $errors = $validator->validate($recipe);
+
+            if (count($errors) == 0)
             {
-                if (is_null($recipeNew->getTitle()))
+                $em->flush();
+                $resource = new Item($recipe, new RecipeToJsonTransformer(), $this->type);
+
+                $manager = new Manager();
+                $manager->setSerializer(new JsonApiSerializer());
+                $query = $request->query;
+
+                if ($query->has('include'))
                 {
-                    $recipeNew->setTitle($recipe->getTitle());
+                    $includes = $query->get('include');
+                    $manager->parseIncludes($includes);
                 }
 
-                if (is_null($recipeNew->getDescription()))
-                {
-                    $recipeNew->setDescription($recipe->getDescription());
-                }
+                $content = $manager->createData($resource)->toJson();
 
-                if (is_null($recipeNew->getIngredients()))
-                {
-                    $recipeNew->setIngredients($recipe->getIngredients());
-                }
-
-                if (is_null($recipeNew->getCategory()))
-                {
-                    $recipeNew->setCategory($recipe->getCategory());
-                }
-
-                if (is_null($recipeNew->getTags()))
-                {
-                    $recipeNew->setTags($recipe->getTags());
-                }
-
-                if (is_null($recipeNew->getImageUrl()))
-                {
-                    $recipeNew->setImageUrl($recipe->getImageUrl());
-                }
-
-                if (is_null($recipeNew->getDate()))
-                {
-                    $recipeNew->setDate($recipe->getDate());
-                }
-
-                $errors = $validator->validate($recipeNew);
-
-                if (count($errors) == 0)
-                {
-                    $recipe->setTitle($recipeNew->getTitle());
-                    $recipe->setDescription($recipeNew->getDescription());
-                    $recipe->setIngredients($recipeNew->getIngredients());
-                    $recipe->setCategory($recipeNew->getCategory());
-                    $recipe->setTags($recipeNew->getTags());
-                    $recipe->setImageUrl($recipeNew->getImageUrl());
-                    $em->flush();
-                    $resource = new Item($recipe, new RecipeToJsonTransformer(), $this->type);
-
-                    $manager = new Manager();
-                    $manager->setSerializer(new JsonApiSerializer());
-                    $query = $request->query;
-
-                    if ($query->has('include'))
-                    {
-                        $includes = $query->get('include');
-                        $manager->parseIncludes($includes);
-                    }
-
-                    $content = $manager->createData($resource)->toJson();
-
-                    $response->setContent($content);
-                    $response->headers->set('Location', '/'.$recipe->getId());
-                    $response->setStatusCode(Response::HTTP_OK);
-                }
-                else
-                {
-                    $transformer = new ErrorToJsonTransformer();
-                    $errorMessage = $transformer->transform($errors);
-                    $response->setContent($errorMessage);
-                    $response->setStatusCode(Response::HTTP_BAD_REQUEST);
-                }
+                $response->setContent($content);
+                $response->headers->set('Location', '/'.$recipe->getId());
+                $response->setStatusCode(Response::HTTP_OK);
             }
             else
             {
-                $response->setStatusCode(Response::HTTP_FORBIDDEN);
+                $transformer = new ErrorToJsonTransformer();
+                $errorMessage = $transformer->transform($errors);
+                $response->setContent($errorMessage);
+                $response->setStatusCode(Response::HTTP_BAD_REQUEST);
             }
         }
         else

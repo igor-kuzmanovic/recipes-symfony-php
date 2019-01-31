@@ -39,7 +39,7 @@ class TagController extends BaseController
 
         $content = $request->getContent();
         $transformer = new JsonToTagTransformer();
-        $tag = $transformer->transformSingle($content);
+        $tag = $transformer->transformSingle(new Tag(), $content);
 
         if ($tag)
         {
@@ -154,37 +154,29 @@ class TagController extends BaseController
         {
             $content = $request->getContent();
             $transformer = new JsonToTagTransformer();
-            $tagNew = $transformer->transformSingle($content);
+            $transformer->transformSingle($tag, $content);
 
-            if ($tagNew)
+            $errors = $validator->validate($tag);
+
+            if (count($errors) == 0)
             {
-                $errors = $validator->validate($tagNew);
+                $em->flush();
+                $resource = new Item($tag, new TagToJsonTransformer(), $this->type);
 
-                if (count($errors) == 0)
-                {
-                    $tag->setName($tagNew->getName());
-                    $em->flush();
-                    $resource = new Item($tag, new TagToJsonTransformer(), $this->type);
+                $manager = new Manager();
+                $manager->setSerializer(new JsonApiSerializer());
+                $content = $manager->createData($resource)->toJson();
 
-                    $manager = new Manager();
-                    $manager->setSerializer(new JsonApiSerializer());
-                    $content = $manager->createData($resource)->toJson();
-
-                    $response->setContent($content);
-                    $response->headers->set('Location', '/' . $tag->getId());
-                    $response->setStatusCode(Response::HTTP_OK);
-                }
-                else
-                {
-                    $transformer = new ErrorToJsonTransformer();
-                    $errorMessage = $transformer->transform($errors);
-                    $response->setContent($errorMessage);
-                    $response->setStatusCode(Response::HTTP_BAD_REQUEST);
-                }
+                $response->setContent($content);
+                $response->headers->set('Location', '/' . $tag->getId());
+                $response->setStatusCode(Response::HTTP_OK);
             }
             else
             {
-                $response->setStatusCode(Response::HTTP_FORBIDDEN);
+                $transformer = new ErrorToJsonTransformer();
+                $errorMessage = $transformer->transform($errors);
+                $response->setContent($errorMessage);
+                $response->setStatusCode(Response::HTTP_BAD_REQUEST);
             }
         }
         else

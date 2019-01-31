@@ -43,39 +43,44 @@ abstract class JsonToObjectTransformer
     abstract protected function transform(object &$object, array $data);
 
     /**
+     * @param &$object
      * @param string $content
      * @return object
      */
-    public function transformSingle(string $content)
+    public function transformSingle(object &$object, string $content)
     {
-        $recipe = new $this->className;
+        if (is_null($object)) {
+            $object = new $this->className;
+        }
 
         $json = json_decode($content, true);
         $data = $this->getData($json);
-        $this->transform($recipe, $data);
+        $this->transform($object, $data);
 
-        return $recipe;
+        return $object;
     }
 
     /**
+     * @param array &$objects
      * @param string $content
      * @return array
      */
-    public function transformMany(string $content)
+    public function transformMany(array &$objects, string $content)
     {
-        $recipes = [];
-
+        if (is_null($objects)) {
+            $objects = [];
+        }
         $json = json_decode($content, true);
         $data = $this->getData($json);
 
         foreach ($data as $datum)
         {
-            $recipe = new $this->className;
-            $this->transform($recipe, $datum);
-            $recipes[] = $recipe;
+            $object = new $this->className;
+            $this->transform($object, $datum);
+            $objects[] = $object;
         }
 
-        return $recipes;
+        return $objects;
     }
 
     /**

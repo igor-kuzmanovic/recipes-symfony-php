@@ -6,6 +6,7 @@ use App\Entity\Category;
 use App\Entity\Ingredient;
 use App\Entity\Recipe;
 use App\Entity\Tag;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 
 class JsonToRecipeTransformer extends JsonToObjectTransformer
@@ -28,6 +29,8 @@ class JsonToRecipeTransformer extends JsonToObjectTransformer
 
         if (key_exists('ingredients', $relationships))
         {
+            $recipe->setIngredients(new ArrayCollection());
+
             $ingredientsRelationship = $relationships['ingredients'];
             $ingredientsData = $this->getData($ingredientsRelationship);
 
@@ -43,10 +46,7 @@ class JsonToRecipeTransformer extends JsonToObjectTransformer
                 }
             }
         }
-        else
-        {
-            $recipe->setIngredients(null);
-        }
+
         if (key_exists('category', $relationships))
         {
             $categoryRelationship = $relationships['category'];
@@ -56,12 +56,11 @@ class JsonToRecipeTransformer extends JsonToObjectTransformer
             $category = $this->em->getRepository(Category::class)->find($id);
             $recipe->setCategory($category);
         }
-        else
-        {
-            $recipe->setCategory(null);
-        }
+
         if (key_exists('tags', $relationships))
         {
+            $recipe->setTags(new ArrayCollection());
+
             $tagsRelationship = $relationships['tags'];
             $tagsData = $this->getData($tagsRelationship);
 
@@ -75,10 +74,6 @@ class JsonToRecipeTransformer extends JsonToObjectTransformer
                     $recipe->getTags()->add($tag);
                 }
             }
-        }
-        else
-        {
-            $recipe->setTags(null);
         }
     }
 
