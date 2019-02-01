@@ -33,16 +33,19 @@ class ImageController extends BaseController
     {
         $response = new Response();
 
-        if ($request->files->has('image')) {
-            $file = $request->files->get('image');
+        if ($request->files->has('file')) {
+            $file = $request->files->get('file');
             $mimeType = $file->getMimeType();
 
             if (preg_match('/image\/.+/', $mimeType) && $file->isValid()) {
                 $id = md5(uniqid());
                 $fileName = $id . '.' . $file->guessExtension();
                 $file->move($this->imagesDirectory, $fileName);
+                $fileUrl = $this->getImagesUrl($request) . '/' . $fileName;
 
-                $response->headers->set('Location', $this->getImagesUrl($request) . '/' . $fileName);
+                $response->headers->set('Location', $fileUrl);
+                $response->headers->set('Content-Type', 'application/json');
+                $response->setContent('{"url":"' . $fileUrl . '"}');
                 $response->setStatusCode(Response::HTTP_CREATED);
             } else {
                 $response->setStatusCode(Response::HTTP_UNSUPPORTED_MEDIA_TYPE);

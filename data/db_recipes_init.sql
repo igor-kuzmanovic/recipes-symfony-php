@@ -21,9 +21,9 @@ INSERT INTO tag (name) VALUES ('Fruity');
 INSERT INTO tag (name) VALUES ('Tangy');
 INSERT INTO tag (name) VALUES ('Greasy');
 
-INSERT INTO recipe (title, description, date, category_id, image_url) VALUES ('Pepperoni Pizza', 'A pepperoni pizza with additional hot-sauce', CURRENT_TIMESTAMP, (SELECT id FROM category WHERE name = 'Breakfast'), 'http://localhost:8000/images/default.jpeg');
-INSERT INTO recipe (title, description, date, category_id, image_url) VALUES ('Vegetarian Pizza', 'A vegetarian pizza rich with vitamins.', CURRENT_TIMESTAMP, (SELECT id FROM category WHERE name = 'Dinner'), 'http://localhost:8000/images/default.jpeg');
-INSERT INTO recipe (title, description, date, category_id, image_url) VALUES ('Pineapple Pizza', 'A fruity pizza rich with a tropical twist.', CURRENT_TIMESTAMP, (SELECT id FROM category WHERE name = 'Lunch'), 'http://localhost:8000/images/default.jpeg');
+INSERT INTO recipe (title, description, date, category_id, image_url) VALUES ('Pepperoni Pizza', 'A pepperoni pizza with additional hot-sauce', CURRENT_TIMESTAMP, (SELECT id FROM category WHERE name = 'Breakfast'), 'http://localhost:8000/images/hot_pizza.jpeg');
+INSERT INTO recipe (title, description, date, category_id, image_url) VALUES ('Vegetarian Pizza', 'A vegetarian pizza rich with vitamins.', CURRENT_TIMESTAMP, (SELECT id FROM category WHERE name = 'Dinner'), 'http://localhost:8000/images/vegan_pizza.jpeg');
+INSERT INTO recipe (title, description, date, category_id, image_url) VALUES ('Pineapple Pizza', 'A fruity pizza rich with a tropical twist.', CURRENT_TIMESTAMP, (SELECT id FROM category WHERE name = 'Lunch'), 'http://localhost:8000/images/pepperoni_pizza.jpeg');
 
 INSERT INTO recipe_ingredient (recipe_id, ingredient_id) VALUES ((SELECT id FROM recipe WHERE title = 'Pepperoni Pizza'), (SELECT id FROM ingredient WHERE name = 'Dough'));
 INSERT INTO recipe_ingredient (recipe_id, ingredient_id) VALUES ((SELECT id FROM recipe WHERE title = 'Pepperoni Pizza'), (SELECT id FROM ingredient WHERE name = 'Ketchup'));

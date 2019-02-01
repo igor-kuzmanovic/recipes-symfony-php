@@ -45,9 +45,9 @@ class RecipeRepository extends ServiceEntityRepository
                 ->setParameter('categories', $categories);
         }
 
-        if (key_exists('tags', $filter))
+        if (key_exists('tag', $filter))
         {
-            $tags = explode(',', $filter['tags']);
+            $tags = explode(',', $filter['tag']);
 
             $qb->orWhere('t1 IN (:tags)')
                 ->setParameter('tags', $tags);
