@@ -14,8 +14,8 @@ class ErrorToJsonTransformer
     public function transform(ConstraintViolationListInterface $errors)
     {
         $errorMessage = '';
-
         $errorMessage .= '{"errors":[';
+
         foreach ($errors as $error)
         {
             $errorMessage .= '{';
@@ -26,6 +26,7 @@ class ErrorToJsonTransformer
             $errorMessage .= '"code":'.'"'.$error->getCode().'"';
             $errorMessage .= '},';
         }
+        
         $errorMessage = substr($errorMessage, 0, -1);
         $errorMessage .= ']}';
 

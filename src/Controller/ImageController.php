@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -12,6 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ImageController extends BaseController
 {
+    private $imagesUrl = '/images';
     private $imagesDirectory = './images';
 
     /**
@@ -20,7 +20,7 @@ class ImageController extends BaseController
      */
     private function getImagesUrl(Request $request)
     {
-        return $this->getHost($request).'/images';
+        return $this->getHost($request).$this->imagesUrl;
     }
 
     /**

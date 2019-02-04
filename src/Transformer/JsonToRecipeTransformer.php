@@ -69,6 +69,7 @@ class JsonToRecipeTransformer extends JsonToObjectTransformer
             foreach ($ids as $id)
             {
                 $tag = $this->em->getRepository(Tag::class)->find($id);
+
                 if (!$recipe->getTags()->contains($tag))
                 {
                     $recipe->getTags()->add($tag);
