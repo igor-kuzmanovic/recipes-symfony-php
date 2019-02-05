@@ -35,6 +35,22 @@ class RecipeRepository extends ServiceEntityRepository
                 ->setParameter('date', $date);
         }
 
+        if (key_exists('dateFrom', $filter))
+        {
+            $dateFrom = $filter['dateFrom'];
+
+            $qb->orWhere('r.date >= :dateFrom')
+                ->setParameter('dateFrom', $dateFrom);
+        }
+
+        if (key_exists('dateTo', $filter))
+        {
+            $dateTo = $filter['dateTo'];
+
+            $qb->orWhere('r.date >= :dateTo')
+                ->setParameter('dateTo', $dateTo);
+        }
+
         if (key_exists('category', $filter))
         {
             $categories = explode(',', $filter['category']);
