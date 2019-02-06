@@ -24,31 +24,35 @@ class RecipeRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('r')
             ->addSelect('i, t')
             ->join('r.ingredients', 'i')
-            ->join('r.tags', 't1')
-            ->join('r.tags', 't');
+            ->join('r.tags', 't')
+            ->join('r.tags', 't1');
 
-        if (key_exists('date', $filter))
-        {
-            $date = $filter['date'];
-
-            $qb->orWhere('r.date >= :date')
-                ->setParameter('date', $date);
-        }
-
-        if (key_exists('dateFrom', $filter))
+        if (key_exists('dateFrom', $filter) && key_exists('dateTo', $filter))
         {
             $dateFrom = $filter['dateFrom'];
-
-            $qb->orWhere('r.date >= :dateFrom')
-                ->setParameter('dateFrom', $dateFrom);
-        }
-
-        if (key_exists('dateTo', $filter))
-        {
             $dateTo = $filter['dateTo'];
 
-            $qb->orWhere('r.date >= :dateTo')
+            $qb->orWhere('r.date BETWEEN :dateFrom AND :dateTo')
+                ->setParameter('dateFrom', $dateFrom)
                 ->setParameter('dateTo', $dateTo);
+        }
+        else
+        {
+            if (key_exists('dateFrom', $filter))
+            {
+                $dateFrom = $filter['dateFrom'];
+
+                $qb->orWhere('r.date >= :dateFrom')
+                    ->setParameter('dateFrom', $dateFrom);
+            }
+
+            if (key_exists('dateTo', $filter))
+            {
+                $dateTo = $filter['dateTo'];
+
+                $qb->orWhere('r.date <= :dateTo')
+                    ->setParameter('dateTo', $dateTo);
+            }
         }
 
         if (key_exists('category', $filter))
