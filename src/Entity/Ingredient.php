@@ -31,7 +31,7 @@ class Ingredient
         return $this->id;
     }
 
-    public function setId(int $id): self
+    public function setId($id): self
     {
         $this->id = $id;
 
@@ -43,7 +43,7 @@ class Ingredient
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName($name): self
     {
         $this->name = $name;
 

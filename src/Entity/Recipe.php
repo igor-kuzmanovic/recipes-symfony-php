@@ -72,7 +72,7 @@ class Recipe
         return $this->id;
     }
 
-    public function setId(int $id): self
+    public function setId($id): self
     {
         $this->id = $id;
 
@@ -84,7 +84,7 @@ class Recipe
         return $this->title;
     }
 
-    public function setTitle(string $title): self
+    public function setTitle($title): self
     {
         $this->title = $title;
 

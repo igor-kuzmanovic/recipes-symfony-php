@@ -13,23 +13,23 @@ class ErrorToJsonTransformer
      */
     public function transform(ConstraintViolationListInterface $errors)
     {
-        $errorMessage = '';
-        $errorMessage .= '{"errors":[';
+        $message = '';
+        $message .= '{"errors":[';
 
         foreach ($errors as $error)
         {
-            $errorMessage .= '{';
-            $errorMessage .= '"source":'.'"'.$error->getPropertyPath().'",';
-            $errorMessage .= '"title":"Not acceptable",';
-            $errorMessage .= '"detail":'.'"'.$error->getMessage().'",';
-            $errorMessage .= '"status":'.'"'.Response::HTTP_NOT_ACCEPTABLE.'",';
-            $errorMessage .= '"code":'.'"'.$error->getCode().'"';
-            $errorMessage .= '},';
+            $message .= '{';
+            $message .= '"source":'.'"'.$error->getPropertyPath().'",';
+            $message .= '"title":"Not acceptable",';
+            $message .= '"detail":'.'"'.$error->getMessage().'",';
+            $message .= '"status":'.'"'.Response::HTTP_NOT_ACCEPTABLE.'",';
+            $message .= '"code":'.'"'.$error->getCode().'"';
+            $message .= '},';
         }
-        
-        $errorMessage = substr($errorMessage, 0, -1);
-        $errorMessage .= ']}';
 
-        return $errorMessage;
+        $message = substr($message, 0, -1);
+        $message .= ']}';
+
+        return $message;
     }
 }
