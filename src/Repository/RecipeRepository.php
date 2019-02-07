@@ -16,8 +16,6 @@ class RecipeRepository extends ServiceEntityRepository
     /**
      * @param array $filter
      * @return array
-     *
-     * example: 'http://localhost:8000/api/recipes?filter[date]=2019-01-01&filter[category]=1,3,5&filter[tag]=2,4'
      */
     public function findByFilter(array $filter)
     {
