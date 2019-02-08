@@ -59,7 +59,7 @@ class Recipe
      * @Assert\NotBlank
      * @Assert\Url
      */
-    private $imageUrl;
+    private $image;
 
     public function __construct()
     {
@@ -151,14 +151,14 @@ class Recipe
         return $this;
     }
 
-    public function getImageUrl(): ?string
+    public function getImage(): ?string
     {
-        return $this->imageUrl;
+        return $this->image;
     }
 
-    public function setImageUrl($imageUrl): self
+    public function setImage($image): self
     {
-        $this->imageUrl = $imageUrl;
+        $this->image = $image;
 
         return $this;
     }

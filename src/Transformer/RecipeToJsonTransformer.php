@@ -24,7 +24,7 @@ class RecipeToJsonTransformer extends Fractal\TransformerAbstract
             'title' => $recipe->getTitle(),
             'description' => $recipe->getDescription(),
             'date' => $recipe->getDate()->format('Y-m-d H:i:s'),
-            'image-url' => $recipe->getImageUrl()
+            'image' => $recipe->getImage()
         ];
     }
 
